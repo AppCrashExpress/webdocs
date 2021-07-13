@@ -20,8 +20,8 @@ class Material(models.Model):
 
 class Specification(models.Model):
     UNITS = (
-        ('cm3', 'Cubic centimeters'),
-        ('t',   'Tonnes'),
+        ('cm3', 'Кубические сантиметры'),
+        ('t',   'Тонны'),
     )
 
     number    = models.PositiveIntegerField()
