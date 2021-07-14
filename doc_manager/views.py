@@ -40,3 +40,11 @@ def create_specification(request):
         'error_text':    error_text,
     }
     return render(request, 'doc_manager/new_specification.html', context=context)
+
+def create_order(request):
+    
+    context = {
+        'customer_list':      the_models.Customer.objects.all(),
+        'specification_list': the_models.Specification.objects.all(),
+    }
+    return render(request, 'doc_manager/new_order.html', context=context)

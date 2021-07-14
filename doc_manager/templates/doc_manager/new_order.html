@@ -1,0 +1,100 @@
+{% extends "base_generic.html" %}
+
+{% block head_addendum %}
+<style>
+    #table-wrapper {
+        display: block;
+        position: relative;
+        height: 150px;
+        overflow: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<form action="{% url 'doc_manager:new_order' %}" method="post">
+    {% csrf_token %}
+    
+    <div class="container">
+        <input type="text" id="from-addr-filter" onkeyup="filter()" placeholder="Погрузка">
+        <input type="text" id="to-addr-filter" onkeyup="filter()" placeholder="Выгрузка">
+        <input type="text" id="mat-filter" onkeyup="filter()" placeholder="Материал">
+        <div id="table-wrapper" class="table-responisve">
+            <table id="spec-table" class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Погрузка</th>
+                        <th scope="col">Выгрузка</th>
+                        <th scope="col">Материал</th>
+                        <th scope="col">Ед. изм.</th>
+                        <th scope="col">Цена</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for spec in specification_list %}
+                    <tr>
+                        <th scope="row">{{spec.number}}</th>
+                        <td>{{spec.from_addr}}</td>
+                        <td>{{spec.to_addr}}</td>
+                        <td>{{spec.material}}</td>
+                        <td>{{spec.units}}</td>
+                        <td>{{spec.price}}</td>
+                        <td>
+                            <input
+                                id="rad{{forloop.counter}}"
+                                type="radio"
+                                name="spec-id"
+                                value="{{spec.id}}">
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}
+
+
+{% block body_scripts %}
+        <script>
+            const rows = document.querySelectorAll("#spec-table tbody tr")
+            const from_addr_filter = document.querySelector("#from-addr-filter")
+            const to_addr_filter   = document.querySelector("#to-addr-filter")
+            const mat_filter       = document.querySelector("#mat-filter")
+            let prev_row = null;
+
+            rows.forEach(function (row) {
+                const row_radio = row.querySelector('input');
+
+                row.addEventListener("click", (event) => {
+                    row_radio.checked = true;
+                    row.classList.add('table-info');
+                    if (prev_row) {
+                        prev_row.classList.remove('table-info');
+                    }
+                    prev_row = row;
+                })
+            })
+
+            filter = function () {
+                    rows.forEach(function (row) {
+                        const cells = row.querySelectorAll("td");
+                        const contains = cells[0].innerText.includes(from_addr_filter.value) &&
+                                         cells[1].innerText.includes(to_addr_filter.value) &&
+                                         cells[2].innerText.includes(mat_filter.value);
+                        if (contains) {
+                            row.style.display = "";
+                        } else {
+                            row.style.display = "none";
+                        }
+                    });
+            };
+        </script>
+
+{% endblock %}
