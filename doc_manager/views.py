@@ -1,21 +1,21 @@
 from django.shortcuts import render
 from . import models as the_models
 
-def create_specification(request):
-    def get_or_create_object(Model, value):
-        try:
-            obj = Model.objects.get(name=request.POST[value])
-        except Model.DoesNotExist:
-            obj = Model(name=request.POST[value])
-            obj.save()
-        return obj
+def get_or_create_object(Model, value, request):
+    try:
+        obj = Model.objects.get(name=request.POST[value])
+    except Model.DoesNotExist:
+        obj = Model(name=request.POST[value])
+        obj.save()
+    return obj
 
+def create_specification(request):
     error_text = None
 
     if request.method == "POST":
-        from_addr = get_or_create_object(the_models.Address,  "from_addr")
-        to_addr   = get_or_create_object(the_models.Address,  "to_addr")
-        material  = get_or_create_object(the_models.Material, "material")
+        from_addr = get_or_create_object(the_models.Address, "from_addr", request)
+        to_addr   = get_or_create_object(the_models.Address, "to_addr", request)
+        material  = get_or_create_object(the_models.Material, "material", request)
 
         doc_no = request.POST["doc_no"]
         units =  request.POST["units"]
@@ -42,6 +42,20 @@ def create_specification(request):
     return render(request, 'doc_manager/new_specification.html', context=context)
 
 def create_order(request):
+
+    if request.method == "POST":
+        customer      = get_or_create_object(the_models.Customer, "client", request)
+        item_count    = request.POST["count"]
+        specification = the_models.Specification.objects.get(pk=request.POST["spec-id"])
+
+        order = the_models.Order(
+            customer=customer,
+            specification=specification,
+            count=item_count
+        )
+
+        order.full_clean()
+        order.save()
     
     context = {
         'customer_list':      the_models.Customer.objects.all(),

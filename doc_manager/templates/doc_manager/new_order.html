@@ -12,9 +12,19 @@
 {% endblock %}
 
 {% block content %}
-
 <form action="{% url 'doc_manager:new_order' %}" method="post">
     {% csrf_token %}
+
+    <label for="client-input">Клиент: </label>
+    <input id="client-input" list="client-list" name="client" autocomplete="off">
+    <datalist id="client-list">
+        {% for customer in customer_list %}
+            <option value="{{ customer.name }}">
+        {% endfor %}
+    </datalist>
+
+    <label for="count-input">Количество: </label>
+    <input id="count-input" type="number" name="count" min="0">
     
     <div class="container">
         <input type="text" id="from-addr-filter" onkeyup="filter()" placeholder="Погрузка">
@@ -56,8 +66,9 @@
         </div>
     </div>
 
-</form>
+    <button type="submit">Добавить</button>
 
+</form>
 {% endblock %}
 
 
@@ -75,7 +86,7 @@
                 row.addEventListener("click", (event) => {
                     row_radio.checked = true;
                     row.classList.add('table-info');
-                    if (prev_row) {
+                    if (prev_row && prev_row != row) {
                         prev_row.classList.remove('table-info');
                     }
                     prev_row = row;
