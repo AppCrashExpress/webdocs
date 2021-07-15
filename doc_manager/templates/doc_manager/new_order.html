@@ -1,14 +1,8 @@
 {% extends "base_generic.html" %}
 
 {% block head_addendum %}
-<style>
-    #table-wrapper {
-        display: block;
-        position: relative;
-        height: 150px;
-        overflow: auto;
-    }
-</style>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'doc_manager/css/styles.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -27,10 +21,10 @@
     <input id="count-input" type="number" name="count" min="0">
     
     <div class="container">
-        <input type="text" id="from-addr-filter" onkeyup="filter()" placeholder="Погрузка">
-        <input type="text" id="to-addr-filter" onkeyup="filter()" placeholder="Выгрузка">
-        <input type="text" id="mat-filter" onkeyup="filter()" placeholder="Материал">
-        <div id="table-wrapper" class="table-responisve">
+        <input type="text" id="from-addr-filter" placeholder="Погрузка">
+        <input type="text" id="to-addr-filter" placeholder="Выгрузка">
+        <input type="text" id="mat-filter" placeholder="Материал">
+        <div class="table-responisve scrollable-table-wrapper">
             <table id="spec-table" class="table">
                 <thead>
                     <tr>
@@ -73,39 +67,5 @@
 
 
 {% block body_scripts %}
-        <script>
-            const rows = document.querySelectorAll("#spec-table tbody tr")
-            const from_addr_filter = document.querySelector("#from-addr-filter")
-            const to_addr_filter   = document.querySelector("#to-addr-filter")
-            const mat_filter       = document.querySelector("#mat-filter")
-            let prev_row = null;
-
-            rows.forEach(function (row) {
-                const row_radio = row.querySelector('input');
-
-                row.addEventListener("click", (event) => {
-                    row_radio.checked = true;
-                    row.classList.add('table-info');
-                    if (prev_row && prev_row != row) {
-                        prev_row.classList.remove('table-info');
-                    }
-                    prev_row = row;
-                })
-            })
-
-            filter = function () {
-                    rows.forEach(function (row) {
-                        const cells = row.querySelectorAll("td");
-                        const contains = cells[0].innerText.includes(from_addr_filter.value) &&
-                                         cells[1].innerText.includes(to_addr_filter.value) &&
-                                         cells[2].innerText.includes(mat_filter.value);
-                        if (contains) {
-                            row.style.display = "";
-                        } else {
-                            row.style.display = "none";
-                        }
-                    });
-            };
-        </script>
-
+<script src="{% static 'doc_manager/js/new_order.js' %}"></script>
 {% endblock %}

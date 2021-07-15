@@ -1,0 +1,6 @@
+.scrollable-table-wrapper {
+    display: block;
+    position: relative;
+    height: 400px;
+    overflow: auto;
+}
