@@ -10,10 +10,10 @@
     {% endif %}
 
     <label for="doc_no_input">Номер документа: </label>
-    <input id="doc_no_input" type="number" name="doc_no" min="0" value={{spec.doc_no}}>
+    <input id="doc_no_input" type="number" name="doc_no" min="0" value="{{spec.doc_no}}">
 
     <label for="from_addr_input">Начало пути: </label>
-    <input id="from_addr_input" list="addr_list" name="from_addr" autocomplete="off" value={{spec.from_addr}}>
+    <input id="from_addr_input" list="addr_list" name="from_addr" autocomplete="off" value="{{spec.from_addr}}">
 
     <label for="to_addr_input">Конец пути: </label>
     <input id="to_addr_input" list="addr_list" name="to_addr" autocomplete="off" value="{{spec.to_addr}}">
