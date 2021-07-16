@@ -39,7 +39,7 @@
                 <tbody>
                 {% for spec in specification_list %}
                     <tr>
-                        <th scope="row">{{spec.number}}</th>
+                        <th scope="row">{{spec.doc_no}}</th>
                         <td>{{spec.from_addr}}</td>
                         <td>{{spec.to_addr}}</td>
                         <td>{{spec.material}}</td>
@@ -50,7 +50,7 @@
                                 id="rad{{forloop.counter}}"
                                 type="radio"
                                 name="spec-id"
-                                value="{{spec.id}}">
+                                value="{{spec.doc_no}}">
                         </td>
 
                     </tr>

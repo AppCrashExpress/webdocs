@@ -24,7 +24,7 @@ class Specification(models.Model):
         ('t',   'Тонны'),
     )
 
-    number    = models.PositiveIntegerField()
+    doc_no    = models.PositiveIntegerField(primary_key=True)
     from_addr = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='spec_from_addr')
     to_addr   = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='spec_to_addr')
     material  = models.ForeignKey('Material', on_delete=models.PROTECT)

@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<form action="{% url 'doc_manager:edit_specification' spec.id %}" method="post">
+<form action="{% url 'doc_manager:edit_specification' spec.doc_no %}" method="post">
     {% csrf_token %}
 
     {% if error_text %}
@@ -10,7 +10,7 @@
     {% endif %}
 
     <label for="doc_no_input">Номер документа: </label>
-    <input id="doc_no_input" type="number" name="doc_no" min="0" value={{spec.number}}>
+    <input id="doc_no_input" type="number" name="doc_no" min="0" value={{spec.doc_no}}>
 
     <label for="from_addr_input">Начало пути: </label>
     <input id="from_addr_input" list="addr_list" name="from_addr" autocomplete="off" value={{spec.from_addr}}>

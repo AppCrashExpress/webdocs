@@ -43,7 +43,7 @@ def create_specification(request):
         price =  request.POST["price"]
 
         spec = the_models.Specification(
-            number=doc_no,
+            doc_no=doc_no,
             from_addr=from_addr,
             to_addr=to_addr,
             material=material,
@@ -78,7 +78,7 @@ def edit_specification(request, pk):
         specification.from_addr = from_addr
         specification.to_addr   = to_addr
         specification.material  = material
-        specification.number    = doc_no
+        specification.doc_no    = doc_no
         specification.units     = units
         specification.price     = price
 

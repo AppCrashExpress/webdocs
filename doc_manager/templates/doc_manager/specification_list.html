@@ -38,14 +38,14 @@
             <tbody>
             {% for spec in specification_list %}
                 <tr>
-                    <th scope="row">{{spec.number}}</th>
+                    <th scope="row">{{spec.doc_no}}</th>
                     <td>{{spec.from_addr}}</td>
                     <td>{{spec.to_addr}}</td>
                     <td>{{spec.material}}</td>
                     <td>{{spec.units}}</td>
                     <td>{{spec.price}}</td>
                     <td>
-                        <a href="{% url 'doc_manager:edit_specification' spec.id %}">
+                        <a href="{% url 'doc_manager:edit_specification' spec.doc_no %}">
                             Редактировать
                         </a>
                     </td>
