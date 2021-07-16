@@ -6,11 +6,24 @@
 {% endblock %}
 
 {% block content %}
+
+{% if order %}
 <form action="{% url 'doc_manager:edit_order' order.id %}" method="post">
+{% else %}
+<form action="{% url 'doc_manager:new_order' %}" method="post">
+{% endif %}
     {% csrf_token %}
 
     <label for="client-input">Клиент: </label>
-    <input id="client-input" list="client-list" name="client" autocomplete="off" value="{{order.customer.name}}">
+    <input 
+        id="client-input"
+        list="client-list"
+        name="client"
+        autocomplete="off" 
+        {% if order %}
+        value="{{order.customer.name}}"
+        {% endif %}
+        >
     <datalist id="client-list">
         {% for customer in customer_list %}
             <option value="{{ customer.name }}">
@@ -18,8 +31,16 @@
     </datalist>
 
     <label for="count-input">Количество: </label>
-    <input id="count-input" type="number" name="count" min="0" value="{{order.count}}">
-    
+    <input 
+        id="count-input" 
+        type="number" 
+        name="count" 
+        min="0" 
+        {% if order %}
+        value="{{order.count}}"
+        {% endif %}
+        >
+
     <div class="container">
         <input type="text" id="from-addr-filter" placeholder="Погрузка">
         <input type="text" id="to-addr-filter" placeholder="Выгрузка">
@@ -60,7 +81,9 @@
         </div>
     </div>
 
-    <button type="submit">Изменить</button>
+    <button type="submit">
+        {% if order %}Изменить{% else %}Добавить{% endif %}
+    </button>
 
 </form>
 {% endblock %}
@@ -68,10 +91,12 @@
 
 {% block body_scripts %}
 <script src="{% static 'doc_manager/js/new_order.js' %}"></script>
+{% if order %}
 <script>
     (function() {
         const preselected_radio = document.querySelector('#rad{{order.specification.doc_no}}');
         preselected_radio.click();
     })()
 </script>
+{% endif %}
 {% endblock %}

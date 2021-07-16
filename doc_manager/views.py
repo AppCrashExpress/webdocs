@@ -60,7 +60,7 @@ def create_specification(request):
         'unit_options':  the_models.Specification.UNITS,
         'error_text':    error_text,
     }
-    return render(request, 'doc_manager/new_specification.html', context=context)
+    return render(request, 'doc_manager/specification.html', context=context)
 
 def edit_specification(request, pk):
     specification = get_object_or_404(the_models.Specification, pk=pk)
@@ -93,7 +93,7 @@ def edit_specification(request, pk):
         'unit_options':  the_models.Specification.UNITS,
         'error_text':    error_text,
     }
-    return render(request, 'doc_manager/edit_specification.html', context=context)
+    return render(request, 'doc_manager/specification.html', context=context)
 
 class OrderList(generic.ListView):
     model = the_models.Order
@@ -120,7 +120,7 @@ def create_order(request):
         'customer_list':      the_models.Customer.objects.all(),
         'specification_list': the_models.Specification.objects.all(),
     }
-    return render(request, 'doc_manager/new_order.html', context=context)
+    return render(request, 'doc_manager/order.html', context=context)
 
 def edit_order(request, pk):
     order = get_object_or_404(the_models.Order, pk=pk)
@@ -143,4 +143,4 @@ def edit_order(request, pk):
         'customer_list':      the_models.Customer.objects.all(),
         'specification_list': the_models.Specification.objects.all(),
     }
-    return render(request, 'doc_manager/edit_order.html', context=context)
+    return render(request, 'doc_manager/order.html', context=context)
