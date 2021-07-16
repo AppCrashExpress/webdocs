@@ -95,6 +95,11 @@ def edit_specification(request, pk):
     }
     return render(request, 'doc_manager/edit_specification.html', context=context)
 
+class OrderList(generic.ListView):
+    model = the_models.Order
+
+    paginate_by = 20
+
 def create_order(request):
 
     if request.method == "POST":
@@ -116,3 +121,26 @@ def create_order(request):
         'specification_list': the_models.Specification.objects.all(),
     }
     return render(request, 'doc_manager/new_order.html', context=context)
+
+def edit_order(request, pk):
+    order = get_object_or_404(the_models.Order, pk=pk)
+
+    if request.method == "POST":
+        customer      = get_or_create_object(the_models.Customer, "client", request)
+        item_count    = request.POST["count"]
+        specification = the_models.Specification.objects.get(pk=request.POST["spec-id"])
+
+
+        order.customer      = customer
+        order.specification = specification
+        order.count         = item_count
+
+        order.full_clean()
+        order.save()
+    
+    context = {
+        'order':              order,
+        'customer_list':      the_models.Customer.objects.all(),
+        'specification_list': the_models.Specification.objects.all(),
+    }
+    return render(request, 'doc_manager/edit_order.html', context=context)

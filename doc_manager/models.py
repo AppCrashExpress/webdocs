@@ -39,8 +39,12 @@ class Order(models.Model):
     customer      = models.ForeignKey('Customer',      on_delete=models.PROTECT)
     count         = models.PositiveIntegerField()
 
+    @property
+    def price(self):
+        return self.specification.price * self.count
+
     class Meta:
-        ordering = ['specification']
+        ordering = ['id']
         unique_together = (('customer', 'specification'),)
 
 class VehicleModel(models.Model):
