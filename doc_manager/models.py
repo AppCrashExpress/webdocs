@@ -24,6 +24,9 @@ class Specification(models.Model):
         ('t',   'Тонны'),
     )
 
+    class Meta:
+        ordering = ['doc_no']
+
     doc_no    = models.PositiveIntegerField(primary_key=True)
     from_addr = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='spec_from_addr')
     to_addr   = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='spec_to_addr')
@@ -32,11 +35,12 @@ class Specification(models.Model):
     price     = models.PositiveIntegerField()
 
 class Order(models.Model):
-    customer      = models.ForeignKey('Customer',      on_delete=models.PROTECT)
     specification = models.ForeignKey('Specification', on_delete=models.PROTECT)
+    customer      = models.ForeignKey('Customer',      on_delete=models.PROTECT)
     count         = models.PositiveIntegerField()
 
     class Meta:
+        ordering = ['specification']
         unique_together = (('customer', 'specification'),)
 
 class VehicleModel(models.Model):
@@ -48,6 +52,9 @@ class VehicleModel(models.Model):
 class Vehicle(models.Model):
     car_id = models.CharField(max_length=255, primary_key=True)
     model  = models.ForeignKey('VehicleModel', on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        ordering = ['car_id']
 
 class Driver(models.Model):
     name = models.CharField(max_length=255)
@@ -61,3 +68,6 @@ class Execution(models.Model):
     driver    = models.ForeignKey('Driver',   on_delete=models.PROTECT, null=True)
     from_addr = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='ord_from_addr', null=True)
     to_addr   = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='ord_to_addr', null=True)
+
+    class Meta:
+        ordering = ['order']
