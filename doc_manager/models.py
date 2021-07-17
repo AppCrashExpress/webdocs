@@ -20,14 +20,15 @@ class Material(models.Model):
 
 class Specification(models.Model):
     UNITS = (
-        ('cm3', 'Кубические сантиметры'),
-        ('t',   'Тонны'),
+        ('m3', 'Кубические метры'),
+        ('t',  'Тонны'),
     )
 
     class Meta:
         ordering = ['doc_no']
 
     doc_no    = models.PositiveIntegerField(primary_key=True)
+    date      = models.DateField()
     from_addr = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='spec_from_addr')
     to_addr   = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='spec_to_addr')
     material  = models.ForeignKey('Material', on_delete=models.PROTECT)
@@ -35,6 +36,7 @@ class Specification(models.Model):
     price     = models.PositiveIntegerField()
 
 class Order(models.Model):
+    date          = models.DateField()
     specification = models.ForeignKey('Specification', on_delete=models.PROTECT)
     customer      = models.ForeignKey('Customer',      on_delete=models.PROTECT)
     count         = models.PositiveIntegerField()
