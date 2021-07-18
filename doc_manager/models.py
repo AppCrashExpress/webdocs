@@ -1,14 +1,32 @@
-from django.db import models
+from django.db         import models
 from softdelete.models import SoftDeleteObject
 
 class Address(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
+class PathCost(models.Model):
+    path_from = models.ForeignKey('Address', on_delete=models.PROTECT, related_name='path_from')
+    path_to   = models.ForeignKey('Address', on_delete=models.PROTECT, related_name='path_to')
+    cost      = models.PositiveIntegerField()
+
+    class Meta:
+        ordering = ['path_from', 'path_to']
+        unique_together = (('path_from', 'path_to'),)
+
+    def __str__(self):
+        return f'"{self.path_from.name}" to "{self.path_to.name} with cost {self.cost}'
+
 class Customer(models.Model):
     name = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -16,24 +34,27 @@ class Customer(models.Model):
 class Material(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
-class VehicleModel(models.Model):
-    model = models.CharField(max_length=255, unique=True)
-
-    def __str__(self):
-        return self.model
-
 class Vehicle(models.Model):
     car_id = models.CharField(max_length=255, primary_key=True)
-    model  = models.ForeignKey('VehicleModel', on_delete=models.SET_NULL, null=True)
+    model  = models.CharField(max_length=255)
 
     class Meta:
         ordering = ['car_id']
 
+    def __str__(self):
+        return f'"{self.car_id}": {self.model}'
+
 class Driver(models.Model):
     name = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -44,9 +65,6 @@ class Specification(SoftDeleteObject, models.Model):
         ('t',  'Тонны'),
     )
 
-    class Meta:
-        ordering = ['doc_no']
-
     doc_no    = models.PositiveIntegerField(primary_key=True)
     date      = models.DateField()
     from_addr = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='spec_from_addr')
@@ -55,16 +73,19 @@ class Specification(SoftDeleteObject, models.Model):
     units     = models.CharField(max_length=3, choices=UNITS)
     price     = models.PositiveIntegerField()
 
+    class Meta:
+        ordering = ['doc_no']
+        unique_together = (('from_addr', 'to_addr'),)
+
 class Order(SoftDeleteObject, models.Model):
     date          = models.DateField()
     specification = models.ForeignKey('Specification', on_delete=models.PROTECT)
     customer      = models.ForeignKey('Customer',      on_delete=models.PROTECT)
     count         = models.PositiveIntegerField()
 
-    vehicle        = models.ForeignKey('Vehicle', on_delete=models.PROTECT, null=True)
-    driver         = models.ForeignKey('Driver',  on_delete=models.PROTECT, null=True)
-    real_from_addr = models.ForeignKey('Address', on_delete=models.PROTECT, related_name='real_from_addr', null=True)
-    real_to_addr   = models.ForeignKey('Address', on_delete=models.PROTECT, related_name='real_to_addr', null=True)
+    vehicle = models.ForeignKey('Vehicle',  on_delete=models.PROTECT, null=True)
+    driver  = models.ForeignKey('Driver',   on_delete=models.PROTECT, null=True)
+    path    = models.ForeignKey('PathCost', on_delete=models.PROTECT, null=True)
 
     @property
     def price(self):

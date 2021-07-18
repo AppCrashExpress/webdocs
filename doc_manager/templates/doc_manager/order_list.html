@@ -14,6 +14,10 @@
                     <th scope="col">Заказчик</th>
                     <th scope="col">Количество</th>
                     <th scope="col">Цена</th>
+                    <th scope="col">Машина</th>
+                    <th scope="col">Водитель</th>
+                    <th scope="col">Фактич.<br>погрузка</th>
+                    <th scope="col">Фактич.<br>выгрузка</th>
                 </tr>
             </thead>
             <tbody>
@@ -24,6 +28,10 @@
                     <td>{{order.customer}}</td>
                     <td>{{order.count}}</td>
                     <td>{{order.price}}</td>
+                    <td>{{order.vehicle}}</td>
+                    <td>{{order.driver}}</td>
+                    <td>{{order.real_from_addr}}</td>
+                    <td>{{order.real_to_addr}}</td>
                     <td>
                         <a href="{% url 'doc_manager:edit_order' order.id %}">
                             Редактировать
