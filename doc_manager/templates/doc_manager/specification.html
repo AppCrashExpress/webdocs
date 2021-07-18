@@ -2,15 +2,7 @@
 
 {% block content %}
 
-{% if spec %}
-{% else %}
-{% endif %}
-
-{% if spec %}
-<form action="{% url 'doc_manager:edit_specification' spec.doc_no %}" method="post">
-{% else %}
-<form action="{% url 'doc_manager:new_specification'  %}" method="post">
-{% endif %}
+<form action="{{ action }}" method="post">
 
     {% csrf_token %}
 
@@ -24,9 +16,15 @@
         type="number"
         name="doc_no"
         min="0"
-        {% if spec %}
-        value="{{spec.doc_no}}"
-        {% endif %}
+        value="{{spec.doc_no|default:"0"}}"
+        >
+
+    <label for="date_input">Дата создания: </label>
+    <input
+        id="date_input"
+        type="date"
+        name="creation_date"
+        value="{{spec.date|date:"Y-m-d"|default:""}}"
         >
 
     <label for="from_addr_input">Начало пути: </label>
@@ -35,9 +33,7 @@
         list="addr_list"
         name="from_addr"
         autocomplete="off"
-        {% if spec %}
-        value="{{spec.from_addr}}"
-        {% endif %}
+        value="{{spec.from_addr|default:""}}"
         >
 
     <label for="to_addr_input">Конец пути: </label>
@@ -46,9 +42,7 @@
         list="addr_list"
         name="to_addr"
         autocomplete="off"
-        {% if spec %}
-        value="{{spec.to_addr}}"
-        {% endif %}
+        value="{{spec.to_addr|default:""}}"
         >
 
     <label for="mat_input">Материал: </label>
@@ -57,9 +51,7 @@
         list="mat_list"
         name="material"
         autocomplete="off"
-        {% if spec %}
-        value="{{spec.material}}"
-        {% endif %}
+        value="{{spec.material|default:""}}"
         >
 
     <label for="units_input">Единицы измерения: </label>
@@ -79,9 +71,7 @@
         type="number"
         name="price"
         min="0"
-        {% if spec %}
-        value="{{spec.price}}"
-        {% endif %}
+        value="{{spec.price|default:"0"}}"
         >
 
     <datalist id="addr_list">

@@ -28,10 +28,11 @@
             <thead>
                 <tr>
                     <th scope="col">#</th>
+                    <th scope="col">Дата<br>создания</th>
                     <th scope="col">Погрузка</th>
                     <th scope="col">Выгрузка</th>
                     <th scope="col">Материал</th>
-                    <th scope="col">Ед. изм.</th>
+                    <th scope="col">Единицы<br>измерения</th>
                     <th scope="col">Цена</th>
                 </tr>
             </thead>
@@ -39,10 +40,11 @@
             {% for spec in specification_list %}
                 <tr>
                     <th scope="row">{{spec.doc_no}}</th>
+                    <td>{{spec.date|date:"d.m.Y"}}</td>
                     <td>{{spec.from_addr}}</td>
                     <td>{{spec.to_addr}}</td>
                     <td>{{spec.material}}</td>
-                    <td>{{spec.units}}</td>
+                    <td>{{spec.get_units_display}}</td>
                     <td>{{spec.price}}</td>
                     <td>
                         <a href="{% url 'doc_manager:edit_specification' spec.doc_no %}">

@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views     import generic
+from django.urls      import reverse
 from . import models as the_models
 
 def get_or_create_object(Model, value, request):
@@ -39,11 +40,13 @@ def create_specification(request):
         material  = get_or_create_object(the_models.Material, "material", request)
 
         doc_no = request.POST["doc_no"]
-        units =  request.POST["units"]
-        price =  request.POST["price"]
+        date   = request.POST["creation_date"]
+        units  = request.POST["units"]
+        price  = request.POST["price"]
 
         spec = the_models.Specification(
             doc_no=doc_no,
+            date=date,
             from_addr=from_addr,
             to_addr=to_addr,
             material=material,
@@ -55,6 +58,7 @@ def create_specification(request):
         spec.save()
 
     context = {
+        'action':        reverse('doc_manager:new_specification'),
         'address_list':  the_models.Address.objects.all(), 
         'material_list': the_models.Material.objects.all(),
         'unit_options':  the_models.Specification.UNITS,
@@ -72,6 +76,7 @@ def edit_specification(request, pk):
         material  = get_or_create_object(the_models.Material, "material", request)
 
         doc_no = request.POST["doc_no"]
+        date  =  request.POST["creation_date"]
         units =  request.POST["units"]
         price =  request.POST["price"]
 
@@ -79,6 +84,7 @@ def edit_specification(request, pk):
         specification.to_addr   = to_addr
         specification.material  = material
         specification.doc_no    = doc_no
+        specification.date      = date
         specification.units     = units
         specification.price     = price
 
@@ -86,7 +92,10 @@ def edit_specification(request, pk):
         specification.save()
 
 
+    action = reverse('doc_manager:edit_specification',
+                     kwargs={'pk': specification.pk})
     context = {
+        'action':        action,
         'spec':          specification,
         'address_list':  the_models.Address.objects.all(), 
         'material_list': the_models.Material.objects.all(),
@@ -104,19 +113,22 @@ def create_order(request):
 
     if request.method == "POST":
         customer      = get_or_create_object(the_models.Customer, "client", request)
-        item_count    = request.POST["count"]
         specification = the_models.Specification.objects.get(pk=request.POST["spec-id"])
+        item_count    = request.POST["count"]
+        date          = request.POST["creation_date"]
 
         order = the_models.Order(
             customer=customer,
             specification=specification,
-            count=item_count
+            count=item_count,
+            date=date
         )
 
         order.full_clean()
         order.save()
     
     context = {
+        'action':             reverse('doc_manager:new_order'),
         'customer_list':      the_models.Customer.objects.all(),
         'specification_list': the_models.Specification.objects.all(),
     }
@@ -127,18 +139,23 @@ def edit_order(request, pk):
 
     if request.method == "POST":
         customer      = get_or_create_object(the_models.Customer, "client", request)
-        item_count    = request.POST["count"]
         specification = the_models.Specification.objects.get(pk=request.POST["spec-id"])
+        item_count    = request.POST["count"]
+        date          = request.POST["creation_date"]
 
 
         order.customer      = customer
         order.specification = specification
         order.count         = item_count
+        order.date          = date
 
         order.full_clean()
         order.save()
     
+    action = reverse('doc_manager:edit_order',
+                     kwargs={'pk': order.pk})
     context = {
+        'action':             action,
         'order':              order,
         'customer_list':      the_models.Customer.objects.all(),
         'specification_list': the_models.Specification.objects.all(),

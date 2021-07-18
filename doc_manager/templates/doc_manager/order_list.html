@@ -10,6 +10,7 @@
             <thead>
                 <tr>
                     <th scope="col">#</th>
+                    <th scope="col">Дата<br>создания</th>
                     <th scope="col">Номер<br>спецификации</th>
                     <th scope="col">Заказчик</th>
                     <th scope="col">Количество</th>
@@ -18,20 +19,23 @@
                     <th scope="col">Водитель</th>
                     <th scope="col">Фактич.<br>погрузка</th>
                     <th scope="col">Фактич.<br>выгрузка</th>
+                    <th scope="col">Ставка</th>
                 </tr>
             </thead>
             <tbody>
             {% for order in order_list %}
                 <tr>
                     <th scope="row">{{order.id}}</th>
+                    <td>{{order.date|date:"d.m.Y"}}</td>
                     <td>{{order.specification.doc_no}}</td>
                     <td>{{order.customer}}</td>
                     <td>{{order.count}}</td>
                     <td>{{order.price}}</td>
                     <td>{{order.vehicle}}</td>
                     <td>{{order.driver}}</td>
-                    <td>{{order.real_from_addr}}</td>
-                    <td>{{order.real_to_addr}}</td>
+                    <td>{{order.path.path_from}}</td>
+                    <td>{{order.path.path_to}}</td>
+                    <td>{{order.path.cost}}</td>
                     <td>
                         <a href="{% url 'doc_manager:edit_order' order.id %}">
                             Редактировать

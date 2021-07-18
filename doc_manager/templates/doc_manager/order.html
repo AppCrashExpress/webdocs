@@ -7,12 +7,16 @@
 
 {% block content %}
 
-{% if order %}
-<form action="{% url 'doc_manager:edit_order' order.id %}" method="post">
-{% else %}
-<form action="{% url 'doc_manager:new_order' %}" method="post">
-{% endif %}
+<form action="{{ action }}" method="post">
     {% csrf_token %}
+
+    <label for="date_input">Дата создания: </label>
+    <input
+        id="date_input"
+        type="date"
+        name="creation_date"
+        value="{{order.date|date:"Y-m-d"|default:""}}"
+        >
 
     <label for="client-input">Клиент: </label>
     <input 
@@ -20,9 +24,7 @@
         list="client-list"
         name="client"
         autocomplete="off" 
-        {% if order %}
-        value="{{order.customer.name}}"
-        {% endif %}
+        value="{{order.customer.name|default:""}}"
         >
     <datalist id="client-list">
         {% for customer in customer_list %}
@@ -36,9 +38,7 @@
         type="number" 
         name="count" 
         min="0" 
-        {% if order %}
-        value="{{order.count}}"
-        {% endif %}
+        value="{{order.count|default:"0"}}"
         >
 
     <div class="container">

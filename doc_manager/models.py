@@ -83,9 +83,9 @@ class Order(SoftDeleteObject, models.Model):
     customer      = models.ForeignKey('Customer',      on_delete=models.PROTECT)
     count         = models.PositiveIntegerField()
 
-    vehicle = models.ForeignKey('Vehicle',  on_delete=models.PROTECT, null=True)
-    driver  = models.ForeignKey('Driver',   on_delete=models.PROTECT, null=True)
-    path    = models.ForeignKey('PathCost', on_delete=models.PROTECT, null=True)
+    vehicle = models.ForeignKey('Vehicle',  on_delete=models.PROTECT, null=True, blank=True)
+    driver  = models.ForeignKey('Driver',   on_delete=models.PROTECT, null=True, blank=True)
+    path    = models.ForeignKey('PathCost', on_delete=models.PROTECT, null=True, blank=True)
 
     @property
     def price(self):
