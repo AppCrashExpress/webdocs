@@ -161,3 +161,58 @@ def edit_order(request, pk):
         'specification_list': the_models.Specification.objects.all(),
     }
     return render(request, 'doc_manager/order.html', context=context)
+
+class PathCostList(generic.ListView):
+    model = the_models.PathCost
+
+    paginate_by = 20
+
+def create_path(request):
+
+    if request.method == "POST":
+        from_addr = get_or_create_object(the_models.Address, "from_addr", request)
+        to_addr   = get_or_create_object(the_models.Address, "to_addr", request)
+
+        cost = request.POST["cost"]
+        
+        pathcost = the_models.PathCost(
+            path_from=from_addr,
+            path_to=to_addr, 
+            cost=cost
+        )
+
+        pathcost.full_clean()
+        pathcost.save()
+
+    context = {
+        'action':        reverse('doc_manager:new_pathcost'),
+        'address_list':  the_models.Address.objects.all(), 
+    }
+
+    return render(request, 'doc_manager/pathcost.html', context=context)
+
+def edit_path(request, pk):
+    pathcost = get_object_or_404(the_models.PathCost, pk=pk)
+
+    if request.method == "POST":
+        from_addr = get_or_create_object(the_models.Address, "from_addr", request)
+        to_addr   = get_or_create_object(the_models.Address, "to_addr", request)
+
+        cost = request.POST["cost"]
+        
+        pathcost.path_from = from_addr
+        pathcost.path_to   = to_addr
+        pathcost.cost      = cost
+
+        pathcost.full_clean()
+        pathcost.save()
+
+    action = reverse('doc_manager:edit_pathcost', kwargs={"pk": pathcost.pk})
+
+    context = {
+        'action':        action,
+        'address_list':  the_models.Address.objects.all(), 
+        'pathcost':      pathcost,
+    }
+
+    return render(request, 'doc_manager/pathcost.html', context=context)

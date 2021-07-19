@@ -1,0 +1,74 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<div class="container">
+    {% if pathcost_list %}
+
+    <div class="table-responisve">
+        <table id="spec-table" class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Погрузка</th>
+                    <th scope="col">Выгрузка</th>
+                    <th scope="col">Ставка</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for path in pathcost_list %}
+                <tr>
+                    <td>{{path.path_from}}</td>
+                    <td>{{path.path_to}}</td>
+                    <td>{{path.cost}}</td>
+                    <td>
+                        <a href="{% url 'doc_manager:edit_pathcost' path.id %}">
+                            Редактировать
+                        </a>
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+
+    <nav aria-label="Переход между страницами">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}" aria-label="Предыдущая">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Предыдущая</span>
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="page-item">
+                <a class="page-link" href="#" aria-label="Текущая">
+                    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+                </a>
+            </li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}" aria-label="Следующая">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Следующая</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    {% endif %}
+
+    {% else %}
+
+    <p>Путей не найдено</p>
+
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<form action="{{ action }}" method="post">
+    {% csrf_token %}
+
+    <label for="from_addr_input">Начало пути: </label>
+    <input
+        id="from_addr_input"
+        list="addr_list"
+        name="from_addr"
+        autocomplete="off"
+        value="{{pathcost.path_from|default:""}}"
+        >
+
+    <label for="to_addr_input">Конец пути: </label>
+    <input
+        id="to_addr_input"
+        list="addr_list"
+        name="to_addr"
+        autocomplete="off"
+        value="{{pathcost.path_to|default:""}}"
+        >
+
+    <label for="cost_input">Ставка: </label>
+    <input
+        id="cost_input"
+        type="number"
+        name="cost"
+        min="0"
+        value="{{pathcost.cost|default:"0"}}"
+        >
+
+    <datalist id="addr_list">
+        {% for addr in address_list %}
+            <option value="{{ addr.name }}">
+        {% endfor %}
+    </datalist>
+
+    <button type="submit">
+        {% if pathcost %}Изменить{% else %}Добавить{% endif %}
+    </button>
+</form>
+
+{% endblock %}
