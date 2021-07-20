@@ -8,3 +8,11 @@ class AddressForm(ModelForm):
         labels = {
             'name': 'Полный адрес',
         }
+
+class MaterialForm(ModelForm):
+    class Meta:
+        model = the_models.Material
+        fields = ['name']
+        labels = {
+            'name': 'Материал',
+        }

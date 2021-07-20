@@ -1,0 +1,13 @@
+{% extends "doc_manager/table_generic.html" %}
+
+{% block table_header %}
+    <th scope="col">Материал</th>
+{% endblock %}
+
+{% block table_row %}
+    <td>{{object.name}}</td>
+{% endblock %}
+
+{% block no_objects_found %}
+    <p>Материалов не найдено</p>
+{% endblock %}

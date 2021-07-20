@@ -216,6 +216,59 @@ def edit_address(request, pk):
 
     return render(request, 'doc_manager/create_edit_generic.html', context=context)
 
+class MaterialsList(generic.ListView):
+    model = the_models.Material
+
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['create_path_name'] = 'doc_manager:new_material'
+        context['edit_path_name'] = 'doc_manager:edit_material'
+
+        return context
+
+def create_material(request):
+
+    if request.method == "POST":
+        form = the_forms.MaterialForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+    else:
+        form = the_forms.MaterialForm()
+
+
+    context = {
+        'action': reverse('doc_manager:new_material'),
+        'form':   form,
+    }
+
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+def edit_material(request, pk):
+    material = the_models.Material.objects.get(pk=pk)
+
+    if request.method == "POST":
+        form = the_forms.MaterialForm(request.POST, instance=material)
+
+        if form.is_valid():
+            form.save()
+
+    else:
+        form = the_forms.MaterialForm(instance=material)
+
+
+    action = reverse('doc_manager:edit_material',
+                     kwargs={'pk':material.pk})
+    context = {
+        'action': action,
+        'form':   form,
+    }
+
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
 class PathCostList(generic.ListView):
     model = the_models.PathCost
 
