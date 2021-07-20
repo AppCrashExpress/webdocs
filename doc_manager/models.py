@@ -41,7 +41,7 @@ class Material(models.Model):
         return self.name
 
 class Vehicle(models.Model):
-    car_id = models.CharField(max_length=255, primary_key=True)
+    car_id = models.CharField(max_length=255, unique=True)
     model  = models.CharField(max_length=255)
 
     class Meta:
