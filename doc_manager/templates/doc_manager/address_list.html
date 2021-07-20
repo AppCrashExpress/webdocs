@@ -1,0 +1,13 @@
+{% extends "doc_manager/table_generic.html" %}
+
+{% block table_header %}
+    <th scope="col">Полный адрес</th>
+{% endblock %}
+
+{% block table_row %}
+    <td>{{object.name}}</td>
+{% endblock %}
+
+{% block no_objects_found %}
+    <p>Адресов не найдено</p>
+{% endblock %}

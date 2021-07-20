@@ -1,0 +1,31 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<form action="{{ action }}" method="post">
+    {% csrf_token %}
+
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+
+    {{ form.non_field_errors }}
+
+    {% for field in form.visible_fields %}
+        <div>
+            {{ field.errors }}
+            <label for="{{ field.id_for_label }}">{{ field.label }}:</label> 
+            {{ field }}
+        </div>
+    {% endfor %}
+
+    <button type="submit">
+        {% if form.instance.id %}
+            Изменить
+        {% else%}
+            Добавить
+        {% endif %}
+    </button>
+</form>
+
+{% endblock %}

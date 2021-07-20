@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views     import generic
 from django.urls      import reverse
 from . import models as the_models
+from . import forms  as the_forms
 
 def get_or_create_object(Model, value, request):
     try:
@@ -161,6 +162,59 @@ def edit_order(request, pk):
         'specification_list': the_models.Specification.objects.all(),
     }
     return render(request, 'doc_manager/order.html', context=context)
+
+class AddressList(generic.ListView):
+    model = the_models.Address
+
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['create_path_name'] = 'doc_manager:new_address'
+        context['edit_path_name'] = 'doc_manager:edit_address'
+
+        return context
+
+def create_address(request):
+
+    if request.method == "POST":
+        form = the_forms.AddressForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+    else:
+        form = the_forms.AddressForm()
+
+
+    context = {
+        'action': reverse('doc_manager:new_address'),
+        'form':   form,
+    }
+
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+def edit_address(request, pk):
+    address = the_models.Address.objects.get(pk=pk)
+
+    if request.method == "POST":
+        form = the_forms.AddressForm(request.POST, instance=address)
+
+        if form.is_valid():
+            form.save()
+
+    else:
+        form = the_forms.AddressForm(instance=address)
+
+
+    action = reverse('doc_manager:edit_address',
+                     kwargs={'pk':address.pk})
+    context = {
+        'action': action,
+        'form':   form,
+    }
+
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
 
 class PathCostList(generic.ListView):
     model = the_models.PathCost

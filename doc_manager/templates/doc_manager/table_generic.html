@@ -1,0 +1,75 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<div class="container">
+    {% if object_list %}
+
+    <div class="table-responisve">
+        <table id="spec-table" class="table">
+            <thead>
+                <tr>
+                    {% block table_header %}{% endblock %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for object in object_list %}
+                <tr>
+                    {% block table_row %}{% endblock %}
+                    <td>
+                        <a href="{% url edit_path_name object.id %}">
+                            Редактировать
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <a class="btn btn-primary" href="{% url create_path_name %}">
+            Создать
+        </a>
+    </div>
+
+    {% if is_paginated %}
+
+    <nav aria-label="Переход между страницами">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}" aria-label="Предыдущая">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Предыдущая</span>
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="page-item">
+                <a class="page-link" href="#" aria-label="Текущая">
+                    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+                </a>
+            </li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}" aria-label="Следующая">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Следующая</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    {% endif %}
+
+    {% else %}
+
+    {% block no_objects_found %}{% endblock %}
+
+    {% endif %}
+</div>
+
+{% endblock %}
