@@ -5,26 +5,29 @@
 <div class="container">
     {% if object_list %}
 
-    <div class="table-responisve">
-        <table id="spec-table" class="table">
-            <thead>
-                <tr>
-                    {% block table_header %}{% endblock %}
-                </tr>
-            </thead>
-            <tbody>
-            {% for object in object_list %}
-                <tr>
-                    {% block table_row %}{% endblock %}
-                    <td>
-                        <a href="{% url edit_path_name object.id %}">
-                            Редактировать
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <div class="container">
+        {% block table_input %}{% endblock %}
+        <div class="table-responisve">
+            <table id="spec-table" class="table">
+                <thead>
+                    <tr>
+                        {% block table_header %}{% endblock %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for object in object_list %}
+                    <tr>
+                        {% block table_row %}{% endblock %}
+                        <td>
+                            <a href="{% url edit_path_name object.id %}">
+                                Редактировать
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div>

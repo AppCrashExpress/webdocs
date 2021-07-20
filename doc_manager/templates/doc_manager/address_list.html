@@ -1,5 +1,17 @@
 {% extends "doc_manager/table_generic.html" %}
 
+{% block table_input %}
+<form method="GET">
+    <input 
+        type="text" 
+        name="name" 
+        id="name-filter" 
+        placeholder="Полный адрес"
+        value="{{name_value}}">
+    <button type="submit">Найти</button>
+</form>
+{% endblock %}
+
 {% block table_header %}
     <th scope="col">Полный адрес</th>
 {% endblock %}

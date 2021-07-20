@@ -165,13 +165,19 @@ def edit_order(request, pk):
 
 class AddressList(generic.ListView):
     model = the_models.Address
-
     paginate_by = 20
+
+    def get_queryset(self):
+        name_value = self.request.GET.get('name', '')
+        queryset = self.model.objects.filter(name__icontains=name_value)
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['create_path_name'] = 'doc_manager:new_address'
         context['edit_path_name'] = 'doc_manager:edit_address'
+
+        context['name_value'] = self.request.GET.get('name', '')
 
         return context
 
@@ -218,13 +224,19 @@ def edit_address(request, pk):
 
 class MaterialsList(generic.ListView):
     model = the_models.Material
-
     paginate_by = 20
+
+    def get_queryset(self):
+        name_value = self.request.GET.get('name', '')
+        queryset = self.model.objects.filter(name__icontains=name_value)
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['create_path_name'] = 'doc_manager:new_material'
         context['edit_path_name'] = 'doc_manager:edit_material'
+
+        context['name_value'] = self.request.GET.get('name', '')
 
         return context
 
