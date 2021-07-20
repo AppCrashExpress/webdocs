@@ -1,0 +1,25 @@
+{% extends "doc_manager/table_generic.html" %}
+
+{% block table_input %}
+<form method="GET">
+    <input 
+        type="text" 
+        name="name" 
+        id="name-filter" 
+        placeholder="ФИО"
+        value="{{name_value}}">
+    <button type="submit">Найти</button>
+</form>
+{% endblock %}
+
+{% block table_header %}
+    <th scope="col">ФИО</th>
+{% endblock %}
+
+{% block table_row %}
+    <td>{{object.name}}</td>
+{% endblock %}
+
+{% block no_objects_found %}
+    <p>Водителей не найдено</p>
+{% endblock %}

@@ -16,3 +16,28 @@ class MaterialForm(ModelForm):
         labels = {
             'name': 'Материал',
         }
+
+class CustomerForm(ModelForm):
+    class Meta:
+        model = the_models.Customer
+        fields = '__all__'
+        labels = {
+            'name': 'Клиент',
+        }
+
+class VehicleForm(ModelForm):
+    class Meta:
+        model = the_models.Vehicle
+        fields = '__all__'
+        labels = {
+            'car_id': 'Номер',
+            'model':  'Модель',
+        }
+
+class DriverForm(ModelForm):
+    class Meta:
+        model = the_models.Driver
+        fields = '__all__'
+        labels = {
+            'name': 'ФИО',
+        }

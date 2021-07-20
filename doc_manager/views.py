@@ -281,6 +281,189 @@ def edit_material(request, pk):
 
     return render(request, 'doc_manager/create_edit_generic.html', context=context)
 
+class CustomersList(generic.ListView):
+    model = the_models.Customer
+    paginate_by = 20
+
+    def get_queryset(self):
+        name_value = self.request.GET.get('name', '')
+        queryset = self.model.objects.filter(name__icontains=name_value)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['create_path_name'] = 'doc_manager:new_customer'
+        context['edit_path_name'] = 'doc_manager:edit_customer'
+
+        context['name_value'] = self.request.GET.get('name', '')
+
+        return context
+
+def create_customer(request):
+
+    if request.method == "POST":
+        form = the_forms.CustomerForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+    else:
+        form = the_forms.CustomerForm()
+
+
+    context = {
+        'action': reverse('doc_manager:new_customer'),
+        'form':   form,
+    }
+
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+def edit_customer(request, pk):
+    customer = the_models.Customer.objects.get(pk=pk)
+
+    if request.method == "POST":
+        form = the_forms.CustomerForm(request.POST, instance=customer)
+
+        if form.is_valid():
+            form.save()
+
+    else:
+        form = the_forms.CustomerForm(instance=customer)
+
+
+    action = reverse('doc_manager:edit_customer',
+                     kwargs={'pk':customer.pk})
+    context = {
+        'action': action,
+        'form':   form,
+    }
+
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+class VehiclesList(generic.ListView):
+    model = the_models.Vehicle
+    paginate_by = 20
+
+    def get_queryset(self):
+        car_id_value = self.request.GET.get('car-id', '')
+        model_value  = self.request.GET.get('model', '')
+
+        queryset = self.model.objects.all()
+        queryset = queryset.filter(car_id__icontains=car_id_value)
+        queryset = queryset.filter(model__icontains=model_value)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['create_path_name'] = 'doc_manager:new_vehicle'
+        context['edit_path_name'] = 'doc_manager:edit_vehicle'
+
+        context['car_id_value'] = self.request.GET.get('car-id', '')
+        context['model_value']  = self.request.GET.get('model', '')
+
+        return context
+
+def create_vehicle(request):
+
+    if request.method == "POST":
+        form = the_forms.VehicleForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+    else:
+        form = the_forms.VehicleForm()
+
+
+    context = {
+        'action': reverse('doc_manager:new_vehicle'),
+        'form':   form,
+    }
+
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+def edit_vehicle(request, pk):
+    vehicle = the_models.Vehicle.objects.get(pk=pk)
+
+    if request.method == "POST":
+        form = the_forms.VehicleForm(request.POST, instance=vehicle)
+
+        if form.is_valid():
+            form.save()
+
+    else:
+        form = the_forms.VehicleForm(instance=vehicle)
+
+
+    action = reverse('doc_manager:edit_vehicle',
+                     kwargs={'pk':vehicle.pk})
+    context = {
+        'action': action,
+        'form':   form,
+    }
+
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+class DriversList(generic.ListView):
+    model = the_models.Driver
+    paginate_by = 20
+
+    def get_queryset(self):
+        name_value = self.request.GET.get('name', '')
+        queryset = self.model.objects.filter(name__icontains=name_value)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['create_path_name'] = 'doc_manager:new_driver'
+        context['edit_path_name'] = 'doc_manager:edit_driver'
+
+        context['name_value'] = self.request.GET.get('name', '')
+
+        return context
+
+def create_driver(request):
+
+    if request.method == "POST":
+        form = the_forms.DriverForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+    else:
+        form = the_forms.DriverForm()
+
+
+    context = {
+        'action': reverse('doc_manager:new_driver'),
+        'form':   form,
+    }
+
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+def edit_driver(request, pk):
+    driver = the_models.Driver.objects.get(pk=pk)
+
+    if request.method == "POST":
+        form = the_forms.DriverForm(request.POST, instance=driver)
+
+        if form.is_valid():
+            form.save()
+
+    else:
+        form = the_forms.DriverForm(instance=driver)
+
+
+    action = reverse('doc_manager:edit_driver',
+                     kwargs={'pk':driver.pk})
+    context = {
+        'action': action,
+        'form':   form,
+    }
+
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
 class PathCostList(generic.ListView):
     model = the_models.PathCost
 

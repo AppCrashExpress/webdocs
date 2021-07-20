@@ -1,0 +1,33 @@
+{% extends "doc_manager/table_generic.html" %}
+
+{% block table_input %}
+<form method="GET">
+    <input 
+        type="text" 
+        name="car-id" 
+        id="car-id-filter" 
+        placeholder="Номер"
+        value="{{car_id_value}}">
+    <input 
+        type="text" 
+        name="model" 
+        id="model-filter" 
+        placeholder="Модель"
+        value="{{model_value}}">
+    <button type="submit">Найти</button>
+</form>
+{% endblock %}
+
+{% block table_header %}
+    <th scope="col">Номер</th>
+    <th scope="col">Модель</th>
+{% endblock %}
+
+{% block table_row %}
+    <th scope="col">{{object.car_id}}</th>
+    <td>{{object.model}}</td>
+{% endblock %}
+
+{% block no_objects_found %}
+    <p>Машин не найдено</p>
+{% endblock %}

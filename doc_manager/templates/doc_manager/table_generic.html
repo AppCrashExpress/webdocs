@@ -30,12 +30,6 @@
         </div>
     </div>
 
-    <div>
-        <a class="btn btn-primary" href="{% url create_path_name %}">
-            Создать
-        </a>
-    </div>
-
     {% if is_paginated %}
 
     <nav aria-label="Переход между страницами">
@@ -73,6 +67,12 @@
     {% block no_objects_found %}{% endblock %}
 
     {% endif %}
+
+    <div>
+        <a class="btn btn-primary" href="{% url create_path_name %}">
+            Создать
+        </a>
+    </div>
 </div>
 
 {% endblock %}
