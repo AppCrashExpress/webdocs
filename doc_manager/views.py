@@ -14,6 +14,7 @@ def get_or_create_object(Model, value, request):
 
 class SpecificationsView(generic.ListView):
     model = the_models.Specification
+    paginate_by = 20
 
     def get_queryset(self):
         from_addr = self.request.GET.get('from-addr')
@@ -29,8 +30,28 @@ class SpecificationsView(generic.ListView):
             new_query = new_query.filter(material__name__icontains=material)
         return new_query
 
+    def get_queryset(self):
+        from_addr = self.request.GET.get('from-addr', '')
+        to_addr   = self.request.GET.get('to-addr', '')
+        material  = self.request.GET.get('material', '')
 
-    paginate_by = 20
+        queryset = self.model.objects.all()
+        queryset = queryset.filter(from_addr__name__icontains=from_addr)
+        queryset = queryset.filter(to_addr__name__icontains=to_addr)
+        queryset = queryset.filter(material__name__icontains=material)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['create_path_name'] = 'doc_manager:new_specification'
+        context['edit_path_name'] = 'doc_manager:edit_specification'
+
+        context['from_addr'] = self.request.GET.get('from-addr', '')
+        context['to_addr']   = self.request.GET.get('to-addr', '')
+        context['material']  = self.request.GET.get('material', '')
+
+        return context
 
 def create_specification(request):
     error_text = None
@@ -107,8 +128,14 @@ def edit_specification(request, pk):
 
 class OrderList(generic.ListView):
     model = the_models.Order
-
     paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['create_path_name'] = 'doc_manager:new_order'
+        context['edit_path_name'] = 'doc_manager:edit_order'
+
+        return context
 
 def create_order(request):
 
@@ -466,8 +493,14 @@ def edit_driver(request, pk):
 
 class PathCostList(generic.ListView):
     model = the_models.PathCost
-
     paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['create_path_name'] = 'doc_manager:new_pathcost'
+        context['edit_path_name'] = 'doc_manager:edit_pathcost'
+
+        return context
 
 def create_path(request):
 

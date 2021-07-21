@@ -1,90 +1,34 @@
-{% extends "base_generic.html" %}
+{% extends "doc_manager/table_generic.html" %}
 
-{% block content %}
-
-<div class="container">
-    {% if order_list %}
-
-    <div class="table-responisve">
-        <table id="spec-table" class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Дата<br>создания</th>
-                    <th scope="col">Номер<br>спецификации</th>
-                    <th scope="col">Заказчик</th>
-                    <th scope="col">Количество</th>
-                    <th scope="col">Цена</th>
-                    <th scope="col">Машина</th>
-                    <th scope="col">Водитель</th>
-                    <th scope="col">Фактич.<br>погрузка</th>
-                    <th scope="col">Фактич.<br>выгрузка</th>
-                    <th scope="col">Ставка</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for order in order_list %}
-                <tr>
-                    <th scope="row">{{order.id}}</th>
-                    <td>{{order.date|date:"d.m.Y"}}</td>
-                    <td>{{order.specification.doc_no}}</td>
-                    <td>{{order.customer}}</td>
-                    <td>{{order.count}}</td>
-                    <td>{{order.price}}</td>
-                    <td>{{order.vehicle}}</td>
-                    <td>{{order.driver}}</td>
-                    <td>{{order.path.path_from}}</td>
-                    <td>{{order.path.path_to}}</td>
-                    <td>{{order.path.cost}}</td>
-                    <td>
-                        <a href="{% url 'doc_manager:edit_order' order.id %}">
-                            Редактировать
-                        </a>
-                    </td>
-
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    {% if is_paginated %}
-
-    <nav aria-label="Переход между страницами">
-        <ul class="pagination">
-            {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}" aria-label="Предыдущая">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">Предыдущая</span>
-                </a>
-            </li>
-            {% endif %}
-
-            <li class="page-item">
-                <a class="page-link" href="#" aria-label="Текущая">
-                    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
-                </a>
-            </li>
-
-            {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}" aria-label="Следующая">
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="sr-only">Следующая</span>
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
-
-    {% endif %}
-
-    {% else %}
-
-    <p>Заказов не найдено</p>
-
-    {% endif %}
-</div>
-
+{% block table_header %}
+    <th scope="col">#</th>
+    <th scope="col">Дата<br>создания</th>
+    <th scope="col">Номер<br>спецификации</th>
+    <th scope="col">Заказчик</th>
+    <th scope="col">Количество</th>
+    <th scope="col">Цена</th>
+    <th scope="col">Машина</th>
+    <th scope="col">Водитель</th>
+    <th scope="col">Фактич.<br>погрузка</th>
+    <th scope="col">Фактич.<br>выгрузка</th>
+    <th scope="col">Ставка</th>
 {% endblock %}
+
+{% block table_row %}
+    <th scope="row">{{object.id}}</th>
+    <td>{{object.date|date:"d.m.Y"}}</td>
+    <td>{{object.specification.doc_no}}</td>
+    <td>{{object.customer}}</td>
+    <td>{{object.count}}</td>
+    <td>{{object.price}}</td>
+    <td>{{object.vehicle}}</td>
+    <td>{{object.driver}}</td>
+    <td>{{object.path.path_from}}</td>
+    <td>{{object.path.path_to}}</td>
+    <td>{{object.path.cost}}</td>
+{% endblock %}
+
+{% block no_objects_found %}
+    <p>Заказов не найдено</p>
+{% endblock %}
+

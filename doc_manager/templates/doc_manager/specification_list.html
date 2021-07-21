@@ -1,100 +1,46 @@
-{% extends "base_generic.html" %}
+{% extends "doc_manager/table_generic.html" %}
 
-{% block content %}
+{% block table_input %}
+<form method="GET" action={% url 'doc_manager:specification' %}>
+    <input 
+        type="text" 
+        name="from-addr" 
+        id="from-addr-filter" 
+        placeholder="Погрузка">
+    <input 
+        type="text" 
+        name="to-addr" 
+        id="to-addr-filter" 
+        placeholder="Выгрузка">
+    <input 
+        type="text" 
+        name="material" 
+        id="mat-filter" 
+        placeholder="Материал">
+    <button type="submit">Найти</button>
+</form>
+{% endblock %}
 
-<div class="container">
-    {% if specification_list %}
+{% block table_header %}
+    <th scope="col">#</th>
+    <th scope="col">Дата<br>создания</th>
+    <th scope="col">Погрузка</th>
+    <th scope="col">Выгрузка</th>
+    <th scope="col">Материал</th>
+    <th scope="col">Единицы<br>измерения</th>
+    <th scope="col">Цена</th>
+{% endblock %}
 
-    <form method="GET" action={% url 'doc_manager:specification' %}>
-        <input 
-            type="text" 
-            name="from-addr" 
-            id="from-addr-filter" 
-            placeholder="Погрузка">
-        <input 
-            type="text" 
-            name="to-addr" 
-            id="to-addr-filter" 
-            placeholder="Выгрузка">
-        <input 
-            type="text" 
-            name="material" 
-            id="mat-filter" 
-            placeholder="Материал">
-        <button type="submit">Найти</button>
-    </form>
-    <div class="table-responisve">
-        <table id="spec-table" class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Дата<br>создания</th>
-                    <th scope="col">Погрузка</th>
-                    <th scope="col">Выгрузка</th>
-                    <th scope="col">Материал</th>
-                    <th scope="col">Единицы<br>измерения</th>
-                    <th scope="col">Цена</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for spec in specification_list %}
-                <tr>
-                    <th scope="row">{{spec.doc_no}}</th>
-                    <td>{{spec.date|date:"d.m.Y"}}</td>
-                    <td>{{spec.from_addr}}</td>
-                    <td>{{spec.to_addr}}</td>
-                    <td>{{spec.material}}</td>
-                    <td>{{spec.get_units_display}}</td>
-                    <td>{{spec.price}}</td>
-                    <td>
-                        <a href="{% url 'doc_manager:edit_specification' spec.doc_no %}">
-                            Редактировать
-                        </a>
-                    </td>
+{% block table_row %}
+    <th scope="row">{{object.doc_no}}</th>
+    <td>{{object.date|date:"d.m.Y"}}</td>
+    <td>{{object.from_addr}}</td>
+    <td>{{object.to_addr}}</td>
+    <td>{{object.material}}</td>
+    <td>{{object.get_units_display}}</td>
+    <td>{{object.price}}</td>
+{% endblock %}
 
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    {% if is_paginated %}
-
-    <nav aria-label="Переход между страницами">
-        <ul class="pagination">
-            {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}" aria-label="Предыдущая">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">Предыдущая</span>
-                </a>
-            </li>
-            {% endif %}
-
-            <li class="page-item">
-                <a class="page-link" href="#" aria-label="Текущая">
-                    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
-                </a>
-            </li>
-
-            {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}" aria-label="Следующая">
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="sr-only">Следующая</span>
-                </a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
-
-    {% endif %}
-
-    {% else %}
-
+{% block no_objects_found %}
     <p>Спецификаций не найдено</p>
-
-    {% endif %}
-</div>
-
 {% endblock %}
