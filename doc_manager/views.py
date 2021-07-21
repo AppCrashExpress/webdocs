@@ -4,31 +4,9 @@ from django.urls      import reverse
 from . import models as the_models
 from . import forms  as the_forms
 
-def get_or_create_object(Model, value, request):
-    try:
-        obj = Model.objects.get(name=request.POST[value])
-    except Model.DoesNotExist:
-        obj = Model(name=request.POST[value])
-        obj.save()
-    return obj
-
 class SpecificationsView(generic.ListView):
     model = the_models.Specification
     paginate_by = 20
-
-    def get_queryset(self):
-        from_addr = self.request.GET.get('from-addr')
-        to_addr   = self.request.GET.get('to-addr')
-        material  = self.request.GET.get('material')
-
-        new_query = self.model.objects.all()
-        if from_addr:
-            new_query = new_query.filter(from_addr__name__icontains=from_addr)
-        if to_addr:
-            new_query = new_query.filter(to_addr__name__icontains=to_addr)
-        if material:
-            new_query = new_query.filter(material__name__icontains=material)
-        return new_query
 
     def get_queryset(self):
         from_addr = self.request.GET.get('from-addr', '')
@@ -73,13 +51,10 @@ def edit_specification(request, pk):
 
     if request.method == "POST":
         form = the_forms.SpecificationForm(request.POST, instance=spec)
-
         if form.is_valid():
             form.save()
-
     else:
         form = the_forms.SpecificationForm(instance=spec)
-
 
     action = reverse('doc_manager:edit_specification',
                      kwargs={'pk':spec.pk})
@@ -155,16 +130,12 @@ class AddressList(generic.ListView):
         return context
 
 def create_address(request):
-
     if request.method == "POST":
         form = the_forms.AddressForm(request.POST)
-
         if form.is_valid():
             form.save()
-
     else:
         form = the_forms.AddressForm()
-
 
     context = {
         'action': reverse('doc_manager:new_address'),
@@ -178,13 +149,10 @@ def edit_address(request, pk):
 
     if request.method == "POST":
         form = the_forms.AddressForm(request.POST, instance=address)
-
         if form.is_valid():
             form.save()
-
     else:
         form = the_forms.AddressForm(instance=address)
-
 
     action = reverse('doc_manager:edit_address',
                      kwargs={'pk':address.pk})
@@ -214,16 +182,12 @@ class MaterialsList(generic.ListView):
         return context
 
 def create_material(request):
-
     if request.method == "POST":
         form = the_forms.MaterialForm(request.POST)
-
         if form.is_valid():
             form.save()
-
     else:
         form = the_forms.MaterialForm()
-
 
     context = {
         'action': reverse('doc_manager:new_material'),
@@ -237,13 +201,10 @@ def edit_material(request, pk):
 
     if request.method == "POST":
         form = the_forms.MaterialForm(request.POST, instance=material)
-
         if form.is_valid():
             form.save()
-
     else:
         form = the_forms.MaterialForm(instance=material)
-
 
     action = reverse('doc_manager:edit_material',
                      kwargs={'pk':material.pk})
@@ -273,16 +234,12 @@ class CustomersList(generic.ListView):
         return context
 
 def create_customer(request):
-
     if request.method == "POST":
         form = the_forms.CustomerForm(request.POST)
-
         if form.is_valid():
             form.save()
-
     else:
         form = the_forms.CustomerForm()
-
 
     context = {
         'action': reverse('doc_manager:new_customer'),
@@ -296,13 +253,10 @@ def edit_customer(request, pk):
 
     if request.method == "POST":
         form = the_forms.CustomerForm(request.POST, instance=customer)
-
         if form.is_valid():
             form.save()
-
     else:
         form = the_forms.CustomerForm(instance=customer)
-
 
     action = reverse('doc_manager:edit_customer',
                      kwargs={'pk':customer.pk})
@@ -338,16 +292,12 @@ class VehiclesList(generic.ListView):
         return context
 
 def create_vehicle(request):
-
     if request.method == "POST":
         form = the_forms.VehicleForm(request.POST)
-
         if form.is_valid():
             form.save()
-
     else:
         form = the_forms.VehicleForm()
-
 
     context = {
         'action': reverse('doc_manager:new_vehicle'),
@@ -361,13 +311,10 @@ def edit_vehicle(request, pk):
 
     if request.method == "POST":
         form = the_forms.VehicleForm(request.POST, instance=vehicle)
-
         if form.is_valid():
             form.save()
-
     else:
         form = the_forms.VehicleForm(instance=vehicle)
-
 
     action = reverse('doc_manager:edit_vehicle',
                      kwargs={'pk':vehicle.pk})
@@ -397,16 +344,12 @@ class DriversList(generic.ListView):
         return context
 
 def create_driver(request):
-
     if request.method == "POST":
         form = the_forms.DriverForm(request.POST)
-
         if form.is_valid():
             form.save()
-
     else:
         form = the_forms.DriverForm()
-
 
     context = {
         'action': reverse('doc_manager:new_driver'),
@@ -420,13 +363,10 @@ def edit_driver(request, pk):
 
     if request.method == "POST":
         form = the_forms.DriverForm(request.POST, instance=driver)
-
         if form.is_valid():
             form.save()
-
     else:
         form = the_forms.DriverForm(instance=driver)
-
 
     action = reverse('doc_manager:edit_driver',
                      kwargs={'pk':driver.pk})
