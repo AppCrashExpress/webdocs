@@ -10,37 +10,21 @@
 <form action="{{ action }}" method="post">
     {% csrf_token %}
 
-    <label for="date_input">Дата создания: </label>
-    <input
-        id="date_input"
-        type="date"
-        name="creation_date"
-        value="{{order.date|date:"Y-m-d"|default:""}}"
-        >
+    {{form.non_field_errors}}
 
-    <label for="client-input">Клиент: </label>
-    <input 
-        id="client-input"
-        list="client-list"
-        name="client"
-        autocomplete="off" 
-        value="{{order.customer.name|default:""}}"
-        >
-    <datalist id="client-list">
-        {% for customer in customer_list %}
-            <option value="{{ customer.name }}">
-        {% endfor %}
-    </datalist>
+    {{form.date.errors}}
+    <label for="{{form.date.id_for_label}}">{{form.date.label}}: </label>
+    {{form.date}}
 
-    <label for="count-input">Количество: </label>
-    <input 
-        id="count-input" 
-        type="number" 
-        name="count" 
-        min="0" 
-        value="{{order.count|default:"0"}}"
-        >
+    {{form.customer.errors}}
+    <label for="{{form.customer.id_for_label}}">{{form.customer.label}}: </label>
+    {{form.customer}}
 
+    {{form.count.errors}}
+    <label for="{{form.count.id_for_label}}">{{form.count.label}}: </label>
+    {{form.count}}
+
+    {{form.specification.errors}}
     <div class="container">
         <input type="text" id="from-addr-filter" placeholder="Погрузка">
         <input type="text" id="to-addr-filter" placeholder="Выгрузка">
@@ -68,10 +52,10 @@
                         <td>{{spec.price}}</td>
                         <td>
                             <input
-                                id="rad{{spec.doc_no}}"
+                                id="rad{{spec.pk}}"
                                 type="radio"
-                                name="spec-id"
-                                value="{{spec.doc_no}}">
+                                name="{{form.specification.name}}"
+                                value="{{spec.pk}}">
                         </td>
 
                     </tr>
@@ -81,8 +65,20 @@
         </div>
     </div>
 
+    {{form.vehicle.errors}}
+    <label for="{{form.vehicle.id_for_label}}">{{form.vehicle.label}}: </label>
+    {{form.vehicle}}
+
+    {{form.driver.errors}}
+    <label for="{{form.driver.id_for_label}}">{{form.driver.label}}: </label>
+    {{form.driver}}
+
+    {{form.path.errors}}
+    <label for="{{form.path.id_for_label}}">{{form.path.label}}: </label>
+    {{form.path}}
+
     <button type="submit">
-        {% if order %}Изменить{% else %}Добавить{% endif %}
+        {% if form.instance.pk %}Изменить{% else %}Добавить{% endif %}
     </button>
 
 </form>
@@ -91,10 +87,10 @@
 
 {% block body_scripts %}
 <script src="{% static 'doc_manager/js/new_order.js' %}"></script>
-{% if order %}
+{% if form.instance.pk %}
 <script>
     (function() {
-        const preselected_radio = document.querySelector('#rad{{order.specification.doc_no}}');
+        const preselected_radio = document.querySelector('#rad{{form.instance.specification.pk}}');
         preselected_radio.click();
     })()
 </script>

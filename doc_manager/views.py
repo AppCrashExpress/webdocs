@@ -54,77 +54,41 @@ class SpecificationsView(generic.ListView):
         return context
 
 def create_specification(request):
-    error_text = None
-
     if request.method == "POST":
-        from_addr = get_or_create_object(the_models.Address, "from_addr", request)
-        to_addr   = get_or_create_object(the_models.Address, "to_addr", request)
-        material  = get_or_create_object(the_models.Material, "material", request)
-
-        doc_no = request.POST["doc_no"]
-        date   = request.POST["creation_date"]
-        units  = request.POST["units"]
-        price  = request.POST["price"]
-
-        spec = the_models.Specification(
-            doc_no=doc_no,
-            date=date,
-            from_addr=from_addr,
-            to_addr=to_addr,
-            material=material,
-            units=units,
-            price=price
-        )
-        
-        spec.full_clean()
-        spec.save()
+        form = the_forms.SpecificationForm(request.POST)
+        if form.is_valid():
+            form.save()
+    else:
+        form = the_forms.SpecificationForm()
 
     context = {
-        'action':        reverse('doc_manager:new_specification'),
-        'address_list':  the_models.Address.objects.all(), 
-        'material_list': the_models.Material.objects.all(),
-        'unit_options':  the_models.Specification.UNITS,
-        'error_text':    error_text,
+        'action': reverse('doc_manager:new_specification'),
+        'form':   form,
     }
-    return render(request, 'doc_manager/specification.html', context=context)
+
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
 
 def edit_specification(request, pk):
-    specification = get_object_or_404(the_models.Specification, pk=pk)
-    error_text = None
+    spec = the_models.Specification.objects.get(pk=pk)
 
     if request.method == "POST":
-        from_addr = get_or_create_object(the_models.Address, "from_addr", request)
-        to_addr   = get_or_create_object(the_models.Address, "to_addr", request)
-        material  = get_or_create_object(the_models.Material, "material", request)
+        form = the_forms.SpecificationForm(request.POST, instance=spec)
 
-        doc_no = request.POST["doc_no"]
-        date  =  request.POST["creation_date"]
-        units =  request.POST["units"]
-        price =  request.POST["price"]
+        if form.is_valid():
+            form.save()
 
-        specification.from_addr = from_addr
-        specification.to_addr   = to_addr
-        specification.material  = material
-        specification.doc_no    = doc_no
-        specification.date      = date
-        specification.units     = units
-        specification.price     = price
-
-        specification.full_clean()
-        specification.save()
+    else:
+        form = the_forms.SpecificationForm(instance=spec)
 
 
     action = reverse('doc_manager:edit_specification',
-                     kwargs={'pk': specification.pk})
+                     kwargs={'pk':spec.pk})
     context = {
-        'action':        action,
-        'spec':          specification,
-        'address_list':  the_models.Address.objects.all(), 
-        'material_list': the_models.Material.objects.all(),
-        'unit_options':  the_models.Specification.UNITS,
-        'error_text':    error_text,
+        'action': action,
+        'form':   form,
     }
-    return render(request, 'doc_manager/specification.html', context=context)
+
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
 
 class OrderList(generic.ListView):
     model = the_models.Order
@@ -138,54 +102,36 @@ class OrderList(generic.ListView):
         return context
 
 def create_order(request):
-
     if request.method == "POST":
-        customer      = get_or_create_object(the_models.Customer, "client", request)
-        specification = the_models.Specification.objects.get(pk=request.POST["spec-id"])
-        item_count    = request.POST["count"]
-        date          = request.POST["creation_date"]
+        form = the_forms.OrderForm(request.POST)
+        if form.is_valid():
+            form.save()
+    else:
+        form = the_forms.OrderForm()
 
-        order = the_models.Order(
-            customer=customer,
-            specification=specification,
-            count=item_count,
-            date=date
-        )
-
-        order.full_clean()
-        order.save()
-    
     context = {
         'action':             reverse('doc_manager:new_order'),
-        'customer_list':      the_models.Customer.objects.all(),
+        'form':               form,
         'specification_list': the_models.Specification.objects.all(),
     }
+
     return render(request, 'doc_manager/order.html', context=context)
 
 def edit_order(request, pk):
-    order = get_object_or_404(the_models.Order, pk=pk)
+    order = the_models.Order.objects.get(pk=pk)
 
     if request.method == "POST":
-        customer      = get_or_create_object(the_models.Customer, "client", request)
-        specification = the_models.Specification.objects.get(pk=request.POST["spec-id"])
-        item_count    = request.POST["count"]
-        date          = request.POST["creation_date"]
+        form = the_forms.OrderForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+    else:
+        form = the_forms.OrderForm(instance=order)
 
-
-        order.customer      = customer
-        order.specification = specification
-        order.count         = item_count
-        order.date          = date
-
-        order.full_clean()
-        order.save()
-    
     action = reverse('doc_manager:edit_order',
-                     kwargs={'pk': order.pk})
+                     kwargs={'pk':order.pk})
     context = {
         'action':             action,
-        'order':              order,
-        'customer_list':      the_models.Customer.objects.all(),
+        'form':               form,
         'specification_list': the_models.Specification.objects.all(),
     }
     return render(request, 'doc_manager/order.html', context=context)
@@ -503,51 +449,35 @@ class PathCostList(generic.ListView):
         return context
 
 def create_path(request):
-
     if request.method == "POST":
-        from_addr = get_or_create_object(the_models.Address, "from_addr", request)
-        to_addr   = get_or_create_object(the_models.Address, "to_addr", request)
-
-        cost = request.POST["cost"]
-        
-        pathcost = the_models.PathCost(
-            path_from=from_addr,
-            path_to=to_addr, 
-            cost=cost
-        )
-
-        pathcost.full_clean()
-        pathcost.save()
+        form = the_forms.PathCostForm(request.POST)
+        if form.is_valid():
+            form.save()
+    else:
+        form = the_forms.PathCostForm()
 
     context = {
-        'action':        reverse('doc_manager:new_pathcost'),
-        'address_list':  the_models.Address.objects.all(), 
+        'action': reverse('doc_manager:new_pathcost'),
+        'form':   form,
     }
 
-    return render(request, 'doc_manager/pathcost.html', context=context)
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
 
 def edit_path(request, pk):
-    pathcost = get_object_or_404(the_models.PathCost, pk=pk)
-
+    pathcost = the_models.PathCost.objects.get(pk=pk)
     if request.method == "POST":
-        from_addr = get_or_create_object(the_models.Address, "from_addr", request)
-        to_addr   = get_or_create_object(the_models.Address, "to_addr", request)
+        form = the_forms.PathCostForm(request.POST, instance=pathcost)
+        if form.is_valid():
+            form.save()
+    else:
+        form = the_forms.PathCostForm(instance=pathcost)
 
-        cost = request.POST["cost"]
-        
-        pathcost.path_from = from_addr
-        pathcost.path_to   = to_addr
-        pathcost.cost      = cost
-
-        pathcost.full_clean()
-        pathcost.save()
-
-    action = reverse('doc_manager:edit_pathcost', kwargs={"pk": pathcost.pk})
-
+    action = reverse('doc_manager:edit_pathcost',
+                     kwargs={'pk':pathcost.pk})
     context = {
-        'action':        action,
-        'address_list':  the_models.Address.objects.all(), 
-        'pathcost':      pathcost,
+        'action': action,
+        'form':   form,
     }
 
-    return render(request, 'doc_manager/pathcost.html', context=context)
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+

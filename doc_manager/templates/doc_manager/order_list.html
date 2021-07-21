@@ -3,9 +3,9 @@
 {% block table_header %}
     <th scope="col">#</th>
     <th scope="col">Дата<br>создания</th>
-    <th scope="col">Номер<br>спецификации</th>
+    <th scope="col">Номер<br>спец.</th>
     <th scope="col">Заказчик</th>
-    <th scope="col">Количество</th>
+    <th scope="col">Кол-во</th>
     <th scope="col">Цена</th>
     <th scope="col">Машина</th>
     <th scope="col">Водитель</th>
@@ -21,11 +21,11 @@
     <td>{{object.customer}}</td>
     <td>{{object.count}}</td>
     <td>{{object.price}}</td>
-    <td>{{object.vehicle}}</td>
-    <td>{{object.driver}}</td>
-    <td>{{object.path.path_from}}</td>
-    <td>{{object.path.path_to}}</td>
-    <td>{{object.path.cost}}</td>
+    <td>{{object.vehicle|default:""}}</td>
+    <td>{{object.driver|default:""}}</td>
+    <td>{{object.path.path_from|default:""}}</td>
+    <td>{{object.path.path_to|default:""}}</td>
+    <td>{{object.path.cost|default:""}}</td>
 {% endblock %}
 
 {% block no_objects_found %}
