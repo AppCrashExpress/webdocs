@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'softdelete',
+    'safedelete',
     'doc_manager.apps.DocManagerConfig',
 ]
 

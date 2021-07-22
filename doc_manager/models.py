@@ -1,5 +1,5 @@
 from django.db         import models
-from softdelete.models import SoftDeleteObject
+from safedelete.models import SafeDeleteModel
 
 class Address(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -59,7 +59,7 @@ class Driver(models.Model):
     def __str__(self):
         return self.name
 
-class Specification(SoftDeleteObject, models.Model):
+class Specification(SafeDeleteModel, models.Model):
     UNITS = (
         ('m3', 'Кубические метры'),
         ('t',  'Тонны'),
@@ -77,7 +77,7 @@ class Specification(SoftDeleteObject, models.Model):
         ordering = ['doc_no']
         unique_together = (('from_addr', 'to_addr'),)
 
-class Order(SoftDeleteObject, models.Model):
+class Order(SafeDeleteModel, models.Model):
     date          = models.DateField()
     specification = models.ForeignKey('Specification', on_delete=models.PROTECT)
     customer      = models.ForeignKey('Customer',      on_delete=models.PROTECT)
