@@ -20,7 +20,7 @@ class PathCost(models.Model):
         unique_together = (('path_from', 'path_to'),)
 
     def __str__(self):
-        return f'"{self.path_from.name}" to "{self.path_to.name} with cost {self.cost}'
+        return f'Из "{self.path_from}" в "{self.path_to} со стоимостью {self.cost}'
 
 class Customer(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -77,6 +77,9 @@ class Specification(SafeDeleteModel, models.Model):
         ordering = ['doc_no']
         unique_together = (('from_addr', 'to_addr'),)
 
+    def __str__(self):
+        return f'Спецификация {self.doc_no} из "{self.from_addr}" в "{self.to_addr}"'
+
 class Order(SafeDeleteModel, models.Model):
     date          = models.DateField()
     specification = models.ForeignKey('Specification', on_delete=models.PROTECT)
@@ -94,3 +97,6 @@ class Order(SafeDeleteModel, models.Model):
     class Meta:
         ordering = ['id']
         unique_together = (('customer', 'specification'),)
+
+    def __str__(self):
+        return f'Заказ клиента "{self.customer}" со спецификацией {self.specification.doc_no}'
