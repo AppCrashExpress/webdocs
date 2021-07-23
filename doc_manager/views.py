@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views     import generic
 from django.urls      import reverse
 from . import models as the_models
@@ -58,12 +58,26 @@ def edit_specification(request, pk):
 
     action = reverse('doc_manager:edit_specification',
                      kwargs={'pk':spec.pk})
+
+    
+    delete_action = reverse('doc_manager:delete_specification',
+                     kwargs={'pk':spec.pk})
+    
+    related_objs = spec.order_set.all()
+
     context = {
+        'delete_action':        delete_action,
+        'related_objects_list': related_objs,
         'action': action,
         'form':   form,
     }
 
     return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+def delete_specification(request, pk):
+    spec = the_models.Specification.objects.get(pk=pk)
+    spec.delete()
+    return redirect('doc_manager:specification')
 
 class OrderList(generic.ListView):
     model = the_models.Order
@@ -104,12 +118,22 @@ def edit_order(request, pk):
 
     action = reverse('doc_manager:edit_order',
                      kwargs={'pk':order.pk})
+
+    delete_action = reverse('doc_manager:delete_order',
+                     kwargs={'pk':order.pk})
+
     context = {
         'action':             action,
+        'delete_action':      delete_action,
         'form':               form,
         'specification_list': the_models.Specification.objects.all(),
     }
     return render(request, 'doc_manager/order.html', context=context)
+
+def delete_order(request, pk):
+    order = the_models.Order.objects.get(pk=pk)
+    order.delete()
+    return redirect('doc_manager:order')
 
 class AddressList(generic.ListView):
     model = the_models.Address
@@ -156,12 +180,22 @@ def edit_address(request, pk):
 
     action = reverse('doc_manager:edit_address',
                      kwargs={'pk':address.pk})
+
+    delete_action = reverse('doc_manager:delete_address',
+                     kwargs={'pk':address.pk})
+
     context = {
+        'delete_action': delete_action,
         'action': action,
         'form':   form,
     }
 
     return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+def delete_address(request, pk):
+    address = the_models.Address.objects.get(pk=pk)
+    address.delete()
+    return redirect('doc_manager:address')
 
 class MaterialsList(generic.ListView):
     model = the_models.Material
@@ -208,12 +242,22 @@ def edit_material(request, pk):
 
     action = reverse('doc_manager:edit_material',
                      kwargs={'pk':material.pk})
+
+    delete_action = reverse('doc_manager:delete_material',
+                     kwargs={'pk':material.pk})
+
     context = {
+        'delete_action': delete_action,
         'action': action,
         'form':   form,
     }
 
     return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+def delete_material(request, pk):
+    material = the_models.Material.objects.get(pk=pk)
+    material.delete()
+    return redirect('doc_manager:material')
 
 class CustomersList(generic.ListView):
     model = the_models.Customer
@@ -260,12 +304,22 @@ def edit_customer(request, pk):
 
     action = reverse('doc_manager:edit_customer',
                      kwargs={'pk':customer.pk})
+
+    delete_action = reverse('doc_manager:delete_customer',
+                     kwargs={'pk':customer.pk})
+
     context = {
+        'delete_action': delete_action,
         'action': action,
         'form':   form,
     }
 
     return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+def delete_customer(request, pk):
+    customer = the_models.Customer.objects.get(pk=pk)
+    customer.delete()
+    return redirect('doc_manager:customer')
 
 class VehiclesList(generic.ListView):
     model = the_models.Vehicle
@@ -318,12 +372,22 @@ def edit_vehicle(request, pk):
 
     action = reverse('doc_manager:edit_vehicle',
                      kwargs={'pk':vehicle.pk})
+
+    delete_action = reverse('doc_manager:delete_vehicle',
+                     kwargs={'pk':vehicle.pk})
+
     context = {
+        'delete_action': delete_action,
         'action': action,
         'form':   form,
     }
 
     return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+def delete_vehicle(request, pk):
+    vehicle = the_models.Vehicle.objects.get(pk=pk)
+    vehicle.delete()
+    return redirect('doc_manager:vehicle')
 
 class DriversList(generic.ListView):
     model = the_models.Driver
@@ -370,12 +434,22 @@ def edit_driver(request, pk):
 
     action = reverse('doc_manager:edit_driver',
                      kwargs={'pk':driver.pk})
+
+    delete_action = reverse('doc_manager:delete_driver',
+                     kwargs={'pk':driver.pk})
+
     context = {
+        'delete_action': delete_action,
         'action': action,
         'form':   form,
     }
 
     return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+def delete_driver(request, pk):
+    driver = the_models.Driver.objects.get(pk=pk)
+    driver.delete()
+    return redirect('doc_manager:driver')
 
 class PathCostList(generic.ListView):
     model = the_models.PathCost
@@ -414,10 +488,20 @@ def edit_path(request, pk):
 
     action = reverse('doc_manager:edit_pathcost',
                      kwargs={'pk':pathcost.pk})
+
+    delete_action = reverse('doc_manager:delete_pathcost',
+                     kwargs={'pk':pathcost.pk})
+
     context = {
+        'delete_action': delete_action,
         'action': action,
         'form':   form,
     }
 
     return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+def delete_path(request, pk):
+    path = the_models.PathCost.objects.get(pk=pk)
+    path.delete()
+    return redirect('doc_manager:pathcost')
 
