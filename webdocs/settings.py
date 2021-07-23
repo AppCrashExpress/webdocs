@@ -54,7 +54,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'webdocs.middleware.RequireLoginMiddleware',
 ]
+
+LOGIN_REQUIRED_URLS = (
+    r'/docs/(.*)$',
+)
+LOGIN_REQUIRED_URLS_EXCEPTIONS = []
 
 ROOT_URLCONF = 'webdocs.urls'
 
