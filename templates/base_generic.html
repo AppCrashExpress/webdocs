@@ -13,29 +13,52 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-2 d-flex flex-column p-3 bg-dark text-white min-vh-100">
             {% block sidebar %}
-                <ul class="sidebar-nav">
+                <nav class="navbar navbar-dark mb-auto">
+                    <ul class="navbar-nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'doc_manager:specification' %}">Спецификации</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'doc_manager:order' %}">Заказы</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'doc_manager:address' %}">Адреса</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'doc_manager:material' %}">Материалы</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'doc_manager:customer' %}">Заказчики</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'doc_manager:vehicle' %}">Транспорты</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'doc_manager:driver' %}">Водители</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'doc_manager:pathcost' %}">Пути</a>
+                        </li>
+                    </ul>
+                </nav>
+                <hr>
                 {% if user.is_authenticated %}
-                    <li>Пользователь: {{ user.get_username }}</li>
-                    <li><a href="{% url 'logout'%}?next={{request.path}}">Выйти</a></li>
+                <div class="dropdown">
+                    <a id="dropdownProfile" class="text-white text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <strong>{{ user.get_username }}</strong>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownProfile">
+                        <li><a class="dropdown-item" href="{% url 'logout'%}?next={{request.path}}">Выйти</a></li>
+                    </ul>
+                </div>
                 {% else %}
-                    <li><a href="{% url 'login'%}?next={{request.path}}">Войти</a></li>
+                    <a class="text-white" href="{% url 'login'%}?next={{request.path}}">Войти</a>
                 {% endif %} 
-                </ul>
-                <ul class="sidebar-nav">
-                    <li><a href="{% url 'doc_manager:specification' %}">Спецификации</a></li>
-                    <li><a href="{% url 'doc_manager:order'         %}">Заказы</a></li>
-                    <li><a href="{% url 'doc_manager:address'       %}">Адреса</a></li>
-                    <li><a href="{% url 'doc_manager:material'      %}">Материалы</a></li>
-                    <li><a href="{% url 'doc_manager:customer'      %}">Заказчики</a></li>
-                    <li><a href="{% url 'doc_manager:vehicle'       %}">Транспорты</a></li>
-                    <li><a href="{% url 'doc_manager:driver'        %}">Водители</a></li>
-                    <li><a href="{% url 'doc_manager:pathcost'      %}">Пути</a></li>
-                </ul>
             {% endblock %}
             </div>
-            <div class="col-sm-10 ">{% block content %}{% endblock %}</div>
+            <div class="col-10 ">{% block content %}{% endblock %}</div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
