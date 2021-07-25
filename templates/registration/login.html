@@ -6,7 +6,7 @@
 
 <p>Вход выполнен под логином {{user.username}}</p>
 
-{% else %}
+{% endif %}
 
 {% if form.errors %}
 <p>Неверные логин или пароль.</p>
@@ -37,7 +37,5 @@
 <input type="submit" value="login">
 <input type="hidden" name="next" value="{{ next }}">
 </form>
-
-{% endif %}
 
 {% endblock %}

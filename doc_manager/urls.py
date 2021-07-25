@@ -12,10 +12,19 @@ urlpatterns = [
     path('specifications/<int:pk>/delete/', views.delete_specification,
           name='delete_specification'),
 
+    path('specifications/deleted/', views.DeletedSpecificationsView.as_view(), name='deleted_specification'),
+    path('specifications/deleted/<int:pk>/', views.restore_specification, name='restore_specification'),
+    path('specifications/deleted/<int:pk>/delete/', views.hard_delete_specification,
+          name='hard_delete_specification'),
+
     path('orders/', views.OrderList.as_view(), name='order'),
     path('orders/new/', views.create_order, name='new_order'),
     path('orders/<int:pk>/', views.edit_order, name='edit_order'),
     path('orders/<int:pk>/delete/', views.delete_order, name='delete_order'),
+
+    path('orders/deleted/', views.DeletedOrderList.as_view(), name='deleted_order'),
+    path('orders/deleted/<int:pk>/', views.restore_order, name='restore_order'),
+    path('orders/deleted/<int:pk>/delete/', views.hard_delete_order, name='hard_delete_order'),
 
     path('addresses/', views.AddressList.as_view(), name='address'),
     path('addresses/new/', views.create_address, name='new_address'),

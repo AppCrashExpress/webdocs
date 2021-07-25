@@ -68,11 +68,13 @@
 
     {% endif %}
 
+    {% if create_path_name %}
     <div>
         <a class="btn btn-primary" href="{% url create_path_name %}">
             Создать
         </a>
     </div>
+    {% endif %}
 </div>
 
 {% endblock %}

@@ -1,6 +1,10 @@
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins     import PermissionRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views     import generic
 from django.urls      import reverse
+from safedelete.models import HARD_DELETE
+
 from . import models as the_models
 from . import forms  as the_forms
 
@@ -79,6 +83,67 @@ def delete_specification(request, pk):
     spec.delete()
     return redirect('doc_manager:specification')
 
+class DeletedSpecificationsView(PermissionRequiredMixin, generic.ListView):
+    model = the_models.Specification
+    paginate_by = 20
+    permission_required = [
+        'doc_manager.undelete_specification',
+        'doc_manager.hard_delete_specification',
+    ]
+
+    def get_queryset(self):
+        from_addr = self.request.GET.get('from-addr', '')
+        to_addr   = self.request.GET.get('to-addr', '')
+        material  = self.request.GET.get('material', '')
+
+        queryset = self.model.objects.deleted_only()
+        queryset = queryset.filter(from_addr__name__icontains=from_addr)
+        queryset = queryset.filter(to_addr__name__icontains=to_addr)
+        queryset = queryset.filter(material__name__icontains=material)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['edit_path_name'] = 'doc_manager:restore_specification'
+
+        context['from_addr'] = self.request.GET.get('from-addr', '')
+        context['to_addr']   = self.request.GET.get('to-addr', '')
+        context['material']  = self.request.GET.get('material', '')
+
+        return context
+
+@permission_required('doc_manager.undelete_specification')
+def restore_specification(request, pk):
+    spec = the_models.Specification.objects.deleted_only().get(pk=pk)
+
+    if request.method == "POST":
+        form = the_forms.SpecificationForm(request.POST, instance=spec)
+        if form.is_valid():
+            form.save()
+    else:
+        form = the_forms.SpecificationForm(instance=spec)
+
+    action = reverse('doc_manager:restore_specification',
+                     kwargs={'pk':spec.pk})
+    
+    delete_action = reverse('doc_manager:hard_delete_specification',
+                     kwargs={'pk':spec.pk})
+    
+    context = {
+        'delete_action': delete_action,
+        'action':        action,
+        'form':          form,
+    }
+
+    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+
+@permission_required('doc_manager.hard_delete_specification')
+def hard_delete_specification(request, pk):
+    spec = the_models.Specification.objects.deleted_only().get(pk=pk)
+    spec.delete(force_policy=HARD_DELETE)
+    return redirect('doc_manager:deleted_specification')
+
 class OrderList(generic.ListView):
     model = the_models.Order
     paginate_by = 20
@@ -134,6 +199,51 @@ def delete_order(request, pk):
     order = the_models.Order.objects.get(pk=pk)
     order.delete()
     return redirect('doc_manager:order')
+
+class DeletedOrderList(PermissionRequiredMixin, generic.ListView):
+    model = the_models.Order
+    paginate_by = 20
+    permission_required = [
+        'doc_manager.undelete_order',
+        'doc_manager.hard_delete_order',
+    ]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['edit_path_name'] = 'doc_manager:restore_order'
+
+        return context
+
+@permission_required('doc_manager.undelete_order')
+def restore_order(request, pk):
+    order = the_models.Order.objects.deleted_only().get(pk=pk)
+
+    if request.method == "POST":
+        form = the_forms.OrderForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+    else:
+        form = the_forms.OrderForm(instance=order)
+
+    action = reverse('doc_manager:restore_order',
+                     kwargs={'pk':order.pk})
+
+    delete_action = reverse('doc_manager:hard_delete_order',
+                     kwargs={'pk':order.pk})
+
+    context = {
+        'action':             action,
+        'delete_action':      delete_action,
+        'form':               form,
+        'specification_list': the_models.Specification.objects.all(),
+    }
+    return render(request, 'doc_manager/order.html', context=context)
+
+@permission_required('doc_manager.hard_delete_order')
+def hard_delete_order(request, pk):
+    order = the_models.Order.objects.deleted_only().get(pk=pk)
+    order.delete(force_policy=HARD_DELETE)
+    return redirect('doc_manager:deleted_order')
 
 class AddressList(generic.ListView):
     model = the_models.Address

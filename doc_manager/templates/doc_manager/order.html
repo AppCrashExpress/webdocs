@@ -77,6 +77,10 @@
     <label for="{{form.path.id_for_label}}">{{form.path.label}}: </label>
     {{form.path}}
 
+    {% if form.instance.deleted %}
+        Объект помечен на удаление: {{form.instance.deleted|date:"d.m.Y, G:i"}}
+    {% endif %}
+
     {% if form.instance.pk %}
     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-modal">
         Удалить
@@ -85,7 +89,11 @@
 
     <button type="submit" class="btn btn-primary">
         {% if form.instance.pk %}
-            Изменить
+            {% if form.instance.deleted %}
+                Восстановить
+            {% else%}
+                Изменить
+            {% endif %}
         {% else%}
             Добавить
         {% endif %}

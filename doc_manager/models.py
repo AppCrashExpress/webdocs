@@ -75,7 +75,11 @@ class Specification(SafeDeleteModel, models.Model):
 
     class Meta:
         ordering = ['doc_no']
-        unique_together = (('from_addr', 'to_addr'),)
+        unique_together = (('from_addr', 'to_addr', 'material'),)
+        permissions = [
+            ("undelete_specification",    'Есть возможность восстанавливать спецификации, помеченные на удаление'),
+            ("hard_delete_specification", 'Есть возможность удалять спецификации, помеченные на удаление')
+        ]
 
     def __str__(self):
         return f'Спецификация {self.doc_no} из "{self.from_addr}" в "{self.to_addr}"'
@@ -97,6 +101,10 @@ class Order(SafeDeleteModel, models.Model):
     class Meta:
         ordering = ['id']
         unique_together = (('customer', 'specification'),)
+        permissions = [
+            ("undelete_order",    'Есть возможность восстанавливать заказы, помеченные на удаление'),
+            ("hard_delete_order", 'Есть возможность удалять заказы, помеченные на удаление')
+        ]
 
     def __str__(self):
         return f'Заказ клиента "{self.customer}" со спецификацией {self.specification.doc_no}'

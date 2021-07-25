@@ -24,7 +24,14 @@
                 {% endif %} 
                 </ul>
                 <ul class="sidebar-nav">
-                    <li><a href="">Home</a></li>
+                    <li><a href="{% url 'doc_manager:specification' %}">Спецификации</a></li>
+                    <li><a href="{% url 'doc_manager:order'         %}">Заказы</a></li>
+                    <li><a href="{% url 'doc_manager:address'       %}">Адреса</a></li>
+                    <li><a href="{% url 'doc_manager:material'      %}">Материалы</a></li>
+                    <li><a href="{% url 'doc_manager:customer'      %}">Заказчики</a></li>
+                    <li><a href="{% url 'doc_manager:vehicle'       %}">Транспорты</a></li>
+                    <li><a href="{% url 'doc_manager:driver'        %}">Водители</a></li>
+                    <li><a href="{% url 'doc_manager:pathcost'      %}">Пути</a></li>
                 </ul>
             {% endblock %}
             </div>
