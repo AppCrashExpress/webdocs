@@ -1,12 +1,14 @@
 {% extends "doc_manager/table_generic.html" %}
 
 {% block table_header %}
+    <th scope="col">#</th>
     <th scope="col">Погрузка</th>
     <th scope="col">Выгрузка</th>
     <th scope="col">Ставка</th>
 {% endblock %}
 
 {% block table_row %}
+    <th scope="row">{{object.pk}}</th>
     <td>{{object.path_from}}</td>
     <td>{{object.path_to}}</td>
     <td>{{object.cost}}</td>

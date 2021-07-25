@@ -13,10 +13,12 @@
 {% endblock %}
 
 {% block table_header %}
+    <th scope="col">#</th>
     <th scope="col">Материал</th>
 {% endblock %}
 
 {% block table_row %}
+    <th scope="row">{{object.pk}}</th>
     <td>{{object.name}}</td>
 {% endblock %}
 
