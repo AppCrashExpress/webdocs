@@ -249,6 +249,10 @@ class DeletedOrderList(PermissionRequiredMixin, generic.ListView):
         'doc_manager.hard_delete_order',
     ]
 
+    def get_queryset(self):
+        queryset = self.model.objects.deleted_only()
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['edit_path_name'] = 'doc_manager:restore_order'
