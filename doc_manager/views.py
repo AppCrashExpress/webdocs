@@ -1,8 +1,12 @@
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins     import PermissionRequiredMixin
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views     import generic
 from django.urls      import reverse
+
+from django.db.models import Sum, F
+
 from safedelete.models import HARD_DELETE
 
 from . import models as the_models
@@ -199,6 +203,40 @@ def delete_order(request, pk):
     order = the_models.Order.objects.get(pk=pk)
     order.delete()
     return redirect('doc_manager:order')
+
+class OrderReportList(generic.ListView):
+    model = the_models.Order
+    paginate_by = 20
+    template_name="doc_manager/order_report.html"
+
+    def get_queryset(self):
+        customer_id      = self.request.GET.get('customer')
+        start_date_value = self.request.GET.get('start_date')
+        end_date_value   = self.request.GET.get('end_date')
+
+        queryset = self.model.objects.all()
+        if customer_id:
+            queryset = queryset.filter(customer=customer_id)
+        if start_date_value:
+            queryset = queryset.filter(date__gte=start_date_value)
+        if end_date_value:
+            queryset = queryset.filter(date__lte=start_date_value)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['customer_list']    = the_models.Customer.objects.all()
+        context['customer_value']   = self.request.GET.get('customer', '')
+        context['start_date_value'] = self.request.GET.get('start_date', '')
+        context['end_date_value']   = self.request.GET.get('end_date', '')
+
+        context['total'] = self.get_queryset().aggregate(
+            total=Sum(F('specification__price') * F('count'))
+        )['total']
+
+        return context
 
 class DeletedOrderList(PermissionRequiredMixin, generic.ListView):
     model = the_models.Order

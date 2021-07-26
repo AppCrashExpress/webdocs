@@ -12,20 +12,28 @@
                 <thead>
                     <tr>
                         {% block table_header %}{% endblock %}
+                        {% if edit_path_name %}
+                        <th scope="col"></th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
                 {% for object in object_list %}
                     <tr>
                         {% block table_row %}{% endblock %}
+                        {% if edit_path_name %}
                         <td>
                             <a href="{% url edit_path_name object.pk %}">
                                 Редактировать
                             </a>
                         </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
                 </tbody>
+                <tfoot>
+                    {% block table_footer %}{% endblock %}
+                </tfoot>
             </table>
         </div>
     </div>

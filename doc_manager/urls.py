@@ -21,6 +21,7 @@ urlpatterns = [
     path('orders/new/', views.create_order, name='new_order'),
     path('orders/<int:pk>/', views.edit_order, name='edit_order'),
     path('orders/<int:pk>/delete/', views.delete_order, name='delete_order'),
+    path('orders/report/', views.OrderReportList.as_view(), name='order_report'),
 
     path('orders/deleted/', views.DeletedOrderList.as_view(), name='deleted_order'),
     path('orders/deleted/<int:pk>/', views.restore_order, name='restore_order'),
