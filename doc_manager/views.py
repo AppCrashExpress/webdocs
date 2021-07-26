@@ -44,6 +44,7 @@ def create_specification(request):
         form = the_forms.SpecificationForm(request.POST)
         if form.is_valid():
             form.save()
+            return redirect('doc_manager:edit_specification', pk=form.instance.pk)
     else:
         form = the_forms.SpecificationForm()
 
@@ -125,6 +126,7 @@ def restore_specification(request, pk):
         form = the_forms.SpecificationForm(request.POST, instance=spec)
         if form.is_valid():
             form.save()
+            return redirect('doc_manager:edit_specification', pk=form.instance.pk)
     else:
         form = the_forms.SpecificationForm(instance=spec)
 
@@ -164,6 +166,7 @@ def create_order(request):
         form = the_forms.OrderForm(request.POST)
         if form.is_valid():
             form.save()
+            return redirect('doc_manager:edit_order', pk=form.instance.pk)
     else:
         form = the_forms.OrderForm()
 
@@ -260,6 +263,7 @@ def restore_order(request, pk):
         form = the_forms.OrderForm(request.POST, instance=order)
         if form.is_valid():
             form.save()
+            return redirect('doc_manager:edit_order', pk=form.instance.pk)
     else:
         form = the_forms.OrderForm(instance=order)
 
@@ -306,6 +310,7 @@ def create_address(request):
         form = the_forms.AddressForm(request.POST)
         if form.is_valid():
             form.save()
+            return redirect('doc_manager:edit_address', pk=form.instance.pk)
     else:
         form = the_forms.AddressForm()
 
@@ -368,6 +373,7 @@ def create_material(request):
         form = the_forms.MaterialForm(request.POST)
         if form.is_valid():
             form.save()
+            return redirect('doc_manager:edit_material', pk=form.instance.pk)
     else:
         form = the_forms.MaterialForm()
 
@@ -430,6 +436,7 @@ def create_customer(request):
         form = the_forms.CustomerForm(request.POST)
         if form.is_valid():
             form.save()
+            return redirect('doc_manager:edit_customer', pk=form.instance.pk)
     else:
         form = the_forms.CustomerForm()
 
@@ -498,6 +505,7 @@ def create_vehicle(request):
         form = the_forms.VehicleForm(request.POST)
         if form.is_valid():
             form.save()
+            return redirect('doc_manager:edit_vehicle', pk=form.instance.pk)
     else:
         form = the_forms.VehicleForm()
 
@@ -560,6 +568,7 @@ def create_driver(request):
         form = the_forms.DriverForm(request.POST)
         if form.is_valid():
             form.save()
+            return redirect('doc_manager:edit_driver', pk=form.instance.pk)
     else:
         form = the_forms.DriverForm()
 
@@ -615,6 +624,7 @@ def create_path(request):
         form = the_forms.PathCostForm(request.POST)
         if form.is_valid():
             form.save()
+            return redirect('doc_manager:edit_pathcost', pk=form.instance.pk)
     else:
         form = the_forms.PathCostForm()
 
