@@ -3,8 +3,6 @@
 {% block content %}
 
 <div class="container">
-    {% if object_list %}
-
     <div class="container">
         {% block table_input %}{% endblock %}
         <div class="table-responisve">
@@ -18,18 +16,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                {% for object in object_list %}
-                    <tr>
-                        {% block table_row %}{% endblock %}
-                        {% if edit_path_name %}
-                        <td>
-                            <a href="{% url edit_path_name object.pk %}">
-                                Редактировать
-                            </a>
-                        </td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
+                {% if object_list %}
+
+                    {% for object in object_list %}
+                        <tr>
+                            {% block table_row %}{% endblock %}
+                            {% if edit_path_name %}
+                            <td>
+                                <a href="{% url edit_path_name object.pk %}">
+                                    Редактировать
+                                </a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+
+                {% endif %}
+
                 </tbody>
                 <tfoot>
                     {% block table_footer %}{% endblock %}
@@ -37,6 +40,14 @@
             </table>
         </div>
     </div>
+
+    
+    {% if not object_list %}
+    
+        {% block no_objects_found %}{% endblock %}
+
+    {% endif %}
+
 
     {% if is_paginated %}
 
@@ -67,12 +78,6 @@
             {% endif %}
         </ul>
     </nav>
-
-    {% endif %}
-
-    {% else %}
-
-    {% block no_objects_found %}{% endblock %}
 
     {% endif %}
 

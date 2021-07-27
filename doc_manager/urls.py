@@ -51,6 +51,7 @@ urlpatterns = [
     path('drivers/new/', views.create_driver, name='new_driver'),
     path('drivers/<int:pk>/', views.edit_driver, name='edit_driver'),
     path('drivers/<int:pk>/delete/', views.delete_driver, name='delete_driver'),
+    path('drivers/report/', views.DriverReportList.as_view(), name='driver_report'),
 
     path('paths/', views.PathCostList.as_view(), name='pathcost'),
     path('paths/new/', views.create_path, name='new_pathcost'),

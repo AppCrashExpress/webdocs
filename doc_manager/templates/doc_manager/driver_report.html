@@ -1,0 +1,47 @@
+{% extends "doc_manager/table_generic.html" %}
+
+
+{% block table_input %}
+<form method="GET">
+    <select name="driver">
+        <option value="">---------</option>
+        {% for driver in driver_list %}
+        <option value="{{driver.pk}}"
+                {% if driver.pk == driver_value|add:"0" %}selected{% endif %}>
+            {{driver}}
+        </option>
+        {% endfor %}
+    </select>
+    <label for="id_start_date">Начало: </label>
+    <input type="date" id="id_start_date" name="start_date" value="{{start_date_value}}">
+    <label for="id_end_date">Конец: </label>
+    <input type="date" id="id_end_date" name="end_date" value="{{end_date_value}}">
+    <button type="submit">Найти</button>
+</form>
+{% endblock %}
+
+{% block table_header %}
+    <th scope="col">#</th>
+    <th scope="col">Водитель</th>
+    <th scope="col">Дата</th>
+    <th scope="col">Ставка</th>
+{% endblock %}
+
+{% block table_row %}
+    <th scope="row">{{object.id}}</th>
+    <td>{{object.driver}}</td>
+    <td>{{object.date|date:"d.m.Y"}}</td>
+    <td>{{object.path.cost}}</td>
+{% endblock %}
+
+{% block table_footer %}
+    <td></td>
+    <td></td>
+    <th scope="row">Итог:</th>
+    <td>{{ total }}</td>
+{% endblock %}
+
+{% block no_objects_found %}
+    <p>Поездок не найдено</p>
+{% endblock %}
+

@@ -612,6 +612,43 @@ def delete_driver(request, pk):
     driver.delete()
     return redirect('doc_manager:driver')
 
+class DriverReportList(generic.ListView):
+    model = the_models.Order
+    paginate_by = 20
+    template_name="doc_manager/driver_report.html"
+
+    def get_queryset(self):
+        driver_id        = self.request.GET.get('driver')
+        start_date_value = self.request.GET.get('start_date')
+        end_date_value   = self.request.GET.get('end_date')
+
+        if not driver_id:
+            return self.model.objects.none()
+
+        queryset = self.model.objects.filter(driver=driver_id)
+        queryset = queryset.filter(path__isnull=False)
+
+        if start_date_value:
+            queryset = queryset.filter(date__gte=start_date_value)
+        if end_date_value:
+            queryset = queryset.filter(date__lte=end_date_value)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['driver_list']      = the_models.Driver.objects.all()
+        context['driver_value']     = self.request.GET.get('driver', '')
+        context['start_date_value'] = self.request.GET.get('start_date', '')
+        context['end_date_value']   = self.request.GET.get('end_date', '')
+
+        context['total'] = self.get_queryset().aggregate(
+            total=Sum('path__cost')
+        )['total']
+
+        return context
+
 class PathCostList(generic.ListView):
     model = the_models.PathCost
     paginate_by = 20
