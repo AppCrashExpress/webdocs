@@ -223,7 +223,7 @@ class OrderReportList(generic.ListView):
         if start_date_value:
             queryset = queryset.filter(date__gte=start_date_value)
         if end_date_value:
-            queryset = queryset.filter(date__lte=start_date_value)
+            queryset = queryset.filter(date__lte=end_date_value)
 
         return queryset
 
