@@ -1,6 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block content %}
 
@@ -67,4 +68,8 @@
 </form>
 {% endif %}
 
+{% endblock %}
+
+{% block body_scripts %}
+    <script src="{% static 'doc_manager/js/select_search.js' %}"></script>
 {% endblock %}

@@ -1,9 +1,9 @@
 {% extends "base_generic.html" %}
 
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block head_addendum %}
-    {% load static %}
     <link rel="stylesheet" href="{% static 'doc_manager/css/styles.css' %}">
 {% endblock %}
 
@@ -137,13 +137,14 @@
 
 
 {% block body_scripts %}
-<script src="{% static 'doc_manager/js/new_order.js' %}"></script>
-{% if form.instance.pk %}
-<script>
-    (function() {
-        const preselected_radio = document.querySelector('#rad{{form.instance.specification.pk}}');
-        preselected_radio.click();
-    })()
-</script>
-{% endif %}
+    <script src="{% static 'doc_manager/js/select_search.js' %}"></script>
+    <script src="{% static 'doc_manager/js/new_order.js' %}"></script>
+    {% if form.instance.pk %}
+    <script>
+        (function() {
+            const preselected_radio = document.querySelector('#rad{{form.instance.specification.pk}}');
+            preselected_radio.click();
+        })()
+    </script>
+    {% endif %}
 {% endblock %}
