@@ -6,6 +6,7 @@
     <th scope="col">Номер<br>спец.</th>
     <th scope="col">Заказчик</th>
     <th scope="col">Кол-во</th>
+    <th scope="col">СИ</th>
     <th scope="col">Сумма</th>
     <th scope="col">Машина</th>
     <th scope="col">Водитель</th>
@@ -18,8 +19,9 @@
     <th scope="row">{{object.id}}</th>
     <td>{{object.date|date:"d.m.Y"}}</td>
     <td>{{object.specification.doc_no}}</td>
-    <td>{{object.customer}}</td>
+    <td>{{object.specification.customer}}</td>
     <td>{{object.count}}</td>
+    <td>{{object.specification.units}}</td>
     <td>{{object.price}}</td>
     <td>{{object.vehicle|default:""}}</td>
     <td>{{object.driver|default:""}}</td>

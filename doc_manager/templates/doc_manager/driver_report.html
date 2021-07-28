@@ -24,6 +24,8 @@
     <th scope="col">#</th>
     <th scope="col">Водитель</th>
     <th scope="col">Дата</th>
+    <th scope="col">Фактич.<br>погрузка</th>
+    <th scope="col">Фактич.<br>выгрузка</th>
     <th scope="col">Ставка</th>
 {% endblock %}
 
@@ -31,10 +33,14 @@
     <th scope="row">{{object.id}}</th>
     <td>{{object.driver}}</td>
     <td>{{object.date|date:"d.m.Y"}}</td>
+    <td>{{object.path.path_from}}</td>
+    <td>{{object.path.path_to}}</td>
     <td>{{object.path.cost}}</td>
 {% endblock %}
 
 {% block table_footer %}
+    <td></td>
+    <td></td>
     <td></td>
     <td></td>
     <th scope="row">Итог:</th>

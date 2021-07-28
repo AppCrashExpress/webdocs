@@ -219,7 +219,7 @@ class OrderReportList(generic.ListView):
 
         queryset = self.model.objects.all()
         if customer_id:
-            queryset = queryset.filter(customer=customer_id)
+            queryset = queryset.filter(specification__customer=customer_id)
         if start_date_value:
             queryset = queryset.filter(date__gte=start_date_value)
         if end_date_value:

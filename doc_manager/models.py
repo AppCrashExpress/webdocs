@@ -67,6 +67,7 @@ class Specification(SafeDeleteModel, models.Model):
 
     doc_no    = models.PositiveIntegerField(primary_key=True)
     date      = models.DateField()
+    customer  = models.ForeignKey('Customer', on_delete=models.PROTECT)
     from_addr = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='spec_from_addr')
     to_addr   = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='spec_to_addr')
     material  = models.ForeignKey('Material', on_delete=models.PROTECT)
@@ -75,7 +76,7 @@ class Specification(SafeDeleteModel, models.Model):
 
     class Meta:
         ordering = ['doc_no']
-        unique_together = (('from_addr', 'to_addr', 'material'),)
+        unique_together = (('customer', 'from_addr', 'to_addr', 'material'),)
         permissions = [
             ("undelete_specification",    'Есть возможность восстанавливать спецификации, помеченные на удаление'),
             ("hard_delete_specification", 'Есть возможность удалять спецификации, помеченные на удаление')
@@ -87,7 +88,6 @@ class Specification(SafeDeleteModel, models.Model):
 class Order(SafeDeleteModel, models.Model):
     date          = models.DateField()
     specification = models.ForeignKey('Specification', on_delete=models.PROTECT)
-    customer      = models.ForeignKey('Customer',      on_delete=models.PROTECT)
     count         = models.PositiveIntegerField()
 
     vehicle = models.ForeignKey('Vehicle',  on_delete=models.PROTECT, null=True, blank=True)
@@ -100,11 +100,10 @@ class Order(SafeDeleteModel, models.Model):
 
     class Meta:
         ordering = ['id']
-        unique_together = (('customer', 'specification'),)
         permissions = [
             ("undelete_order",    'Есть возможность восстанавливать заказы, помеченные на удаление'),
             ("hard_delete_order", 'Есть возможность удалять заказы, помеченные на удаление')
         ]
 
     def __str__(self):
-        return f'Заказ клиента "{self.customer}" со спецификацией {self.specification.doc_no}'
+        return f'Заказ с № спец. {self.specification.doc_no} по пути: {self.path}'

@@ -24,6 +24,7 @@
 {% block table_header %}
     <th scope="col">#</th>
     <th scope="col">Дата<br>создания</th>
+    <th scope="col">Клиент</th>
     <th scope="col">Погрузка</th>
     <th scope="col">Выгрузка</th>
     <th scope="col">Материал</th>
@@ -34,6 +35,7 @@
 {% block table_row %}
     <th scope="row">{{object.doc_no}}</th>
     <td>{{object.date|date:"d.m.Y"}}</td>
+    <td>{{object.customer}}</td>
     <td>{{object.from_addr}}</td>
     <td>{{object.to_addr}}</td>
     <td>{{object.material}}</td>

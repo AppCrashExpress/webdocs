@@ -16,8 +16,6 @@
 
     {{form.date | as_crispy_field }}
 
-    {{form.customer | as_crispy_field }}
-
     {{form.count | as_crispy_field }}
 
     {{form.specification.errors | as_crispy_errors}}
@@ -34,6 +32,7 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
+                            <th scope="col">Клиент</th>
                             <th scope="col">Погрузка</th>
                             <th scope="col">Выгрузка</th>
                             <th scope="col">Материал</th>
@@ -46,6 +45,7 @@
                     {% for spec in specification_list %}
                         <tr>
                             <th scope="row">{{spec.doc_no}}</th>
+                            <td>{{spec.customer}}</td>
                             <td>{{spec.from_addr}}</td>
                             <td>{{spec.to_addr}}</td>
                             <td>{{spec.material}}</td>
