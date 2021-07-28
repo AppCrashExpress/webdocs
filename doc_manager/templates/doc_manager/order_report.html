@@ -23,10 +23,12 @@
 {% block table_header %}
     <th scope="col">#</th>
     <th scope="col">Дата<br>создания</th>
+    <th scope="col">Номер<br>спец.</th>
     <th scope="col">Заказчик</th>
     <th scope="col">Фактич.<br>погрузка</th>
     <th scope="col">Фактич.<br>выгрузка</th>
     <th scope="col">Цена<br>за ед.</th>
+    <th scope="col">Ед.<br>изм.</th>
     <th scope="col">Кол-во</th>
     <th scope="col">Сумма</th>
 {% endblock %}
@@ -34,23 +36,47 @@
 {% block table_row %}
     <th scope="row">{{object.id}}</th>
     <td>{{object.date|date:"d.m.Y"}}</td>
+    <td>{{object.specification.doc_no}}</td>
     <td>{{object.specification.customer}}</td>
     <td>{{object.path.path_from|default:""}}</td>
     <td>{{object.path.path_to|default:""}}</td>
     <td>{{object.specification.price}}</td>
+    <td>{{object.specification.units}}</td>
     <td>{{object.count}}</td>
     <td>{{object.price}}</td>
 {% endblock %}
 
-{% block table_footer %}
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <th scope="row">Итог:</th>
-    <td>{{ total }}</td>
+{% block post_table %}
+<div class="col-4">
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Ед. изм.</th>
+            <th scope="col">Кол-во</th>
+            <th scope="col">Сумма</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Куб. метры</td>
+            <td>{{metres_total | default:"0"}}</td>
+            <td>{{metres_sum | default:"0"}}</td>
+        </tr>
+        <tr>
+            <td>Тонны</td>
+            <td>{{tonnes_total | default:"0"}}</td>
+            <td>{{tonnes_sum | default:"0"}}</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td></td>
+            <td>Итого: </td>
+            <td>{{total_sum | default:"0"}}</td>
+        </tr>
+    </tfoot>
+</table>
+</div>
 {% endblock %}
 
 {% block no_objects_found %}

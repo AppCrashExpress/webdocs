@@ -94,8 +94,8 @@ class SpecificationForm(ModelForm):
         labels = {
             'doc_no':    'Номер документа',
             'date':      'Дата создания',
-            'from_addr': 'Начало пути',
-            'to_addr':   'Конец пути',
+            'from_addr': 'Начальный адрес',
+            'to_addr':   'Конечный адрес',
             'material':  'Материал',
             'units':     'Единицы измерения',
             'price':     'Цена',

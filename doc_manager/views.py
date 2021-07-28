@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views     import generic
 from django.urls      import reverse
 
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Q
 
 from safedelete.models import HARD_DELETE
 
@@ -14,7 +14,6 @@ from . import forms  as the_forms
 
 class SpecificationsView(generic.ListView):
     model = the_models.Specification
-    paginate_by = 20
 
     def get_queryset(self):
         from_addr = self.request.GET.get('from-addr', '')
@@ -90,7 +89,6 @@ def delete_specification(request, pk):
 
 class DeletedSpecificationsView(PermissionRequiredMixin, generic.ListView):
     model = the_models.Specification
-    paginate_by = 20
     permission_required = [
         'doc_manager.undelete_specification',
         'doc_manager.hard_delete_specification',
@@ -152,7 +150,6 @@ def hard_delete_specification(request, pk):
 
 class OrderList(generic.ListView):
     model = the_models.Order
-    paginate_by = 20
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -209,7 +206,6 @@ def delete_order(request, pk):
 
 class OrderReportList(generic.ListView):
     model = the_models.Order
-    paginate_by = 20
     template_name="doc_manager/order_report.html"
 
     def get_queryset(self):
@@ -235,15 +231,21 @@ class OrderReportList(generic.ListView):
         context['start_date_value'] = self.request.GET.get('start_date', '')
         context['end_date_value']   = self.request.GET.get('end_date', '')
 
-        context['total'] = self.get_queryset().aggregate(
-            total=Sum(F('specification__price') * F('count'))
-        )['total']
+        totals = self.get_queryset().aggregate(
+            metres_total=Sum('count', filter=Q(specification__units='m3')),
+            tonnes_total=Sum('count', filter=Q(specification__units='t')),
+            metres_sum=Sum(F('specification__price') * F('count'), filter=Q(specification__units='m3')),
+            tonnes_sum=Sum(F('specification__price') * F('count'), filter=Q(specification__units='t')),
+        )
+        for key, value in totals.items():
+            context[key] = value
+
+        context['total_sum'] = totals['metres_sum'] + totals['tonnes_sum']
 
         return context
 
 class DeletedOrderList(PermissionRequiredMixin, generic.ListView):
     model = the_models.Order
-    paginate_by = 20
     permission_required = [
         'doc_manager.undelete_order',
         'doc_manager.hard_delete_order',
@@ -293,7 +295,6 @@ def hard_delete_order(request, pk):
 
 class AddressList(generic.ListView):
     model = the_models.Address
-    paginate_by = 20
 
     def get_queryset(self):
         name_value = self.request.GET.get('name', '')
@@ -356,7 +357,6 @@ def delete_address(request, pk):
 
 class MaterialsList(generic.ListView):
     model = the_models.Material
-    paginate_by = 20
 
     def get_queryset(self):
         name_value = self.request.GET.get('name', '')
@@ -419,7 +419,6 @@ def delete_material(request, pk):
 
 class CustomersList(generic.ListView):
     model = the_models.Customer
-    paginate_by = 20
 
     def get_queryset(self):
         name_value = self.request.GET.get('name', '')
@@ -482,7 +481,6 @@ def delete_customer(request, pk):
 
 class VehiclesList(generic.ListView):
     model = the_models.Vehicle
-    paginate_by = 20
 
     def get_queryset(self):
         car_id_value = self.request.GET.get('car-id', '')
@@ -551,7 +549,6 @@ def delete_vehicle(request, pk):
 
 class DriversList(generic.ListView):
     model = the_models.Driver
-    paginate_by = 20
 
     def get_queryset(self):
         name_value = self.request.GET.get('name', '')
@@ -614,7 +611,6 @@ def delete_driver(request, pk):
 
 class DriverReportList(generic.ListView):
     model = the_models.Order
-    paginate_by = 20
     template_name="doc_manager/driver_report.html"
 
     def get_queryset(self):
@@ -622,12 +618,10 @@ class DriverReportList(generic.ListView):
         start_date_value = self.request.GET.get('start_date')
         end_date_value   = self.request.GET.get('end_date')
 
-        if not driver_id:
-            return self.model.objects.none()
+        queryset = self.model.objects.filter(path__isnull=False)
 
-        queryset = self.model.objects.filter(driver=driver_id)
-        queryset = queryset.filter(path__isnull=False)
-
+        if driver_id:
+            queryset = queryset.filter(driver=driver_id)
         if start_date_value:
             queryset = queryset.filter(date__gte=start_date_value)
         if end_date_value:
@@ -651,7 +645,6 @@ class DriverReportList(generic.ListView):
 
 class PathCostList(generic.ListView):
     model = the_models.PathCost
-    paginate_by = 20
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
