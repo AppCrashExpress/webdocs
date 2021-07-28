@@ -57,7 +57,8 @@ class SpecificationForm(ModelForm):
         model = the_models.Specification
         fields = '__all__'
         widgets = {
-            'date': DateInput(attrs={'type': 'date'}),
+            'date': DateInput(format=('%Y-%m-%d'),
+                              attrs={'type': 'date'}),
         }
         labels = {
             'doc_no':    'Номер документа',
@@ -74,7 +75,8 @@ class OrderForm(ModelForm):
         model = the_models.Order
         fields = '__all__'
         widgets = {
-            'date':          DateInput(attrs={'type': 'date'}),
+            'date': DateInput(format=('%Y-%m-%d'),
+                              attrs={'type': 'date'}),
             'specification': RadioSelect(),
         }
         labels = {
