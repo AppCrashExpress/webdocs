@@ -20,7 +20,7 @@ class PathCost(models.Model):
         unique_together = (('path_from', 'path_to'),)
 
     def __str__(self):
-        return f'Из "{self.path_from}" в "{self.path_to} со стоимостью {self.cost}'
+        return f'Из "{self.path_from}" в "{self.path_to}" со стоимостью {self.cost}'
 
 class Customer(models.Model):
     name = models.CharField(max_length=255, unique=True)
