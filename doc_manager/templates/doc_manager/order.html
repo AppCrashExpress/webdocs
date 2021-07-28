@@ -1,5 +1,7 @@
 {% extends "base_generic.html" %}
 
+{% load crispy_forms_tags %}
+
 {% block head_addendum %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'doc_manager/css/styles.css' %}">
@@ -10,72 +12,66 @@
 <form action="{{ action }}" method="post">
     {% csrf_token %}
 
-    {{form.non_field_errors}}
+    {{form | as_crispy_errors}}
 
-    {{form.date.errors}}
-    <label for="{{form.date.id_for_label}}">{{form.date.label}}: </label>
-    {{form.date}}
+    {{form.date | as_crispy_field }}
 
-    {{form.customer.errors}}
-    <label for="{{form.customer.id_for_label}}">{{form.customer.label}}: </label>
-    {{form.customer}}
+    {{form.customer | as_crispy_field }}
 
-    {{form.count.errors}}
-    <label for="{{form.count.id_for_label}}">{{form.count.label}}: </label>
-    {{form.count}}
+    {{form.count | as_crispy_field }}
 
-    {{form.specification.errors}}
-    <div class="container">
-        <input type="text" id="from-addr-filter" placeholder="Погрузка">
-        <input type="text" id="to-addr-filter" placeholder="Выгрузка">
-        <input type="text" id="mat-filter" placeholder="Материал">
-        <div class="table-responisve scrollable-table-wrapper">
-            <table id="spec-table" class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Погрузка</th>
-                        <th scope="col">Выгрузка</th>
-                        <th scope="col">Материал</th>
-                        <th scope="col">Ед. изм.</th>
-                        <th scope="col">Цена</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for spec in specification_list %}
-                    <tr>
-                        <th scope="row">{{spec.doc_no}}</th>
-                        <td>{{spec.from_addr}}</td>
-                        <td>{{spec.to_addr}}</td>
-                        <td>{{spec.material}}</td>
-                        <td>{{spec.units}}</td>
-                        <td>{{spec.price}}</td>
-                        <td>
-                            <input
-                                id="rad{{spec.pk}}"
-                                type="radio"
-                                name="{{form.specification.name}}"
-                                value="{{spec.pk}}">
-                        </td>
+    {{form.specification.errors | as_crispy_errors}}
+    <div id="div_id_specification" class="mb-3">
+        <label class="form-label requiredField">
+            {{form.specification.label}}<span class="asteriskField">*</span>
+        </label>
+        <div class="container">
+            <input type="text" id="from-addr-filter" placeholder="Погрузка">
+            <input type="text" id="to-addr-filter" placeholder="Выгрузка">
+            <input type="text" id="mat-filter" placeholder="Материал">
+            <div class="table-responisve scrollable-table-wrapper">
+                <table id="spec-table" class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Погрузка</th>
+                            <th scope="col">Выгрузка</th>
+                            <th scope="col">Материал</th>
+                            <th scope="col">Ед. изм.</th>
+                            <th scope="col">Цена</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for spec in specification_list %}
+                        <tr>
+                            <th scope="row">{{spec.doc_no}}</th>
+                            <td>{{spec.from_addr}}</td>
+                            <td>{{spec.to_addr}}</td>
+                            <td>{{spec.material}}</td>
+                            <td>{{spec.units}}</td>
+                            <td>{{spec.price}}</td>
+                            <td>
+                                <input
+                                    id="rad{{spec.pk}}"
+                                    type="radio"
+                                    name="{{form.specification.name}}"
+                                    value="{{spec.pk}}">
+                            </td>
 
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    {{form.vehicle.errors}}
-    <label for="{{form.vehicle.id_for_label}}">{{form.vehicle.label}}: </label>
-    {{form.vehicle}}
+    {{form.vehicle | as_crispy_field }}
 
-    {{form.driver.errors}}
-    <label for="{{form.driver.id_for_label}}">{{form.driver.label}}: </label>
-    {{form.driver}}
+    {{form.driver | as_crispy_field }}
 
-    {{form.path.errors}}
-    <label for="{{form.path.id_for_label}}">{{form.path.label}}: </label>
-    {{form.path}}
+    {{form.path | as_crispy_field }}
 
     {% if form.instance.deleted %}
         Объект помечен на удаление: {{form.instance.deleted|date:"d.m.Y, G:i"}}

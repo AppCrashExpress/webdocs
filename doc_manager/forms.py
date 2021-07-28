@@ -1,4 +1,5 @@
-from django.forms import ModelForm, DateInput, RadioSelect
+from django.forms        import ModelForm, DateInput, RadioSelect
+from crispy_forms.helper import FormHelper
 from . import models as the_models
 
 class AddressForm(ModelForm):
@@ -9,6 +10,11 @@ class AddressForm(ModelForm):
             'name': 'Полный адрес',
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
 class MaterialForm(ModelForm):
     class Meta:
         model = the_models.Material
@@ -17,6 +23,11 @@ class MaterialForm(ModelForm):
             'name': 'Материал',
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
 class CustomerForm(ModelForm):
     class Meta:
         model = the_models.Customer
@@ -24,6 +35,11 @@ class CustomerForm(ModelForm):
         labels = {
             'name': 'Клиент',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
 
 class VehicleForm(ModelForm):
     class Meta:
@@ -34,6 +50,11 @@ class VehicleForm(ModelForm):
             'model':  'Модель',
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
 class DriverForm(ModelForm):
     class Meta:
         model = the_models.Driver
@@ -41,6 +62,11 @@ class DriverForm(ModelForm):
         labels = {
             'name': 'ФИО',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
 
 class PathCostForm(ModelForm):
     class Meta:
@@ -51,6 +77,11 @@ class PathCostForm(ModelForm):
             'path_from': 'Конец пути',
             'cost':      'Ставка',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
 
 class SpecificationForm(ModelForm):
     class Meta:
@@ -70,6 +101,11 @@ class SpecificationForm(ModelForm):
             'price':     'Цена',
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
 class OrderForm(ModelForm):
     class Meta:
         model = the_models.Order
@@ -88,3 +124,8 @@ class OrderForm(ModelForm):
             'driver':        'Водитель',
             'path':          'Путь',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
