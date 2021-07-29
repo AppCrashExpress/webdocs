@@ -293,6 +293,61 @@ def hard_delete_order(request, pk):
     order.delete(force_policy=HARD_DELETE)
     return redirect('doc_manager:deleted_order')
 
+class ExecutionList(generic.ListView):
+    model = the_models.Execution
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['create_path_name'] = 'doc_manager:new_execution'
+        context['edit_path_name'] = 'doc_manager:edit_execution'
+
+        return context
+
+def create_execution(request):
+    if request.method == "POST":
+        form = the_forms.ExecutionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('doc_manager:edit_execution', pk=form.instance.pk)
+    else:
+        form = the_forms.ExecutionForm()
+
+    context = {
+        'action': reverse('doc_manager:new_execution'),
+        'form':   form,
+    }
+
+    return render(request, 'doc_manager/execution.html', context=context)
+
+def edit_execution(request, pk):
+    execution = the_models.Execution.objects.get(pk=pk)
+
+    if request.method == "POST":
+        form = the_forms.ExecutionForm(request.POST, instance=execution)
+        if form.is_valid():
+            form.save()
+    else:
+        form = the_forms.ExecutionForm(instance=execution)
+
+    action = reverse('doc_manager:edit_execution',
+                     kwargs={'pk':execution.pk})
+
+    delete_action = reverse('doc_manager:delete_execution',
+                     kwargs={'pk':execution.pk})
+
+    context = {
+        'delete_action': delete_action,
+        'action': action,
+        'form':   form,
+    }
+
+    return render(request, 'doc_manager/execution.html', context=context)
+
+def delete_execution(request, pk):
+    execution = the_models.Execution.objects.get(pk=pk)
+    execution.delete()
+    return redirect('doc_manager:execution')
+
 class AddressList(generic.ListView):
     model = the_models.Address
 

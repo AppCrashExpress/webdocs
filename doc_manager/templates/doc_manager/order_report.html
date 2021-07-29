@@ -31,6 +31,7 @@
     <th scope="col">Ед.<br>изм.</th>
     <th scope="col">Кол-во</th>
     <th scope="col">Сумма</th>
+    <th scope="col">УПД</th>
 {% endblock %}
 
 {% block table_row %}
@@ -44,6 +45,7 @@
     <td>{{object.specification.units}}</td>
     <td>{{object.count}}</td>
     <td>{{object.price}}</td>
+    <td>{{object.exec_doc|yesno:"Да,Нет"}}</td>
 {% endblock %}
 
 {% block post_table %}

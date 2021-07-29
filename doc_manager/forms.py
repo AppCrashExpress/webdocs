@@ -1,4 +1,7 @@
-from django.forms        import ModelForm, DateInput, RadioSelect
+from django              import forms
+from django.db.models    import Q
+from django.forms        import ModelForm, DateInput, RadioSelect, CheckboxSelectMultiple
+from django.core.exceptions import ValidationError
 from crispy_forms.helper import FormHelper
 from . import models as the_models
 
@@ -109,7 +112,14 @@ class SpecificationForm(ModelForm):
 class OrderForm(ModelForm):
     class Meta:
         model = the_models.Order
-        fields = '__all__'
+        fields = [
+            'date',
+            'specification',
+            'count',
+            'vehicle',
+            'driver',
+            'path',
+        ]
         widgets = {
             'date': DateInput(format=('%Y-%m-%d'),
                               attrs={'type': 'date'}),
@@ -118,7 +128,6 @@ class OrderForm(ModelForm):
         labels = {
             'date':          'Дата создания',
             'specification': 'Спецификация',
-            'customer':      'Клиент',
             'count':         'Количество',
             'vehicle':       'Машина',
             'driver':        'Водитель',
@@ -129,3 +138,68 @@ class OrderForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
+
+class ExecutionForm(ModelForm):
+    class ExecutionMultipleChoiceField(forms.ModelMultipleChoiceField):
+        def label_from_instance(self, obj):
+            return (f'<th scope="row">{obj.pk}</td>'
+                    f'<td>{obj.date}</td>'
+                    f'<td>{obj.specification.pk}</td>'
+                    f'<td>{obj.specification.customer}</td>')
+
+    class Meta:
+        model  = the_models.Execution
+        fields = '__all__'
+        widgets = {
+            'date': DateInput(format=('%Y-%m-%d'),
+                              attrs={'type': 'date'}),
+        }
+        labels = {
+            'exec_no': 'Номер УПД',
+            'date':    'Дата создания',
+        }
+
+    orders = ExecutionMultipleChoiceField(
+        label='Заказы',
+        widget=CheckboxSelectMultiple(),
+        queryset=None
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+        order_filter = Q(exec_doc__isnull=True)
+        if self.instance.pk:
+            order_filter |= Q(exec_doc=self.instance.pk)
+        self.fields['orders'].queryset = the_models.Order.objects.filter(order_filter)
+        if self.instance.pk:
+            self.fields['orders'].initial = self.instance.order_set.all()
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        data = cleaned_data.get('orders')
+
+        if not data or len(data) == 0:
+            raise ValidationError("Должен быть выбран хотя бы один заказ")
+
+        distinct_customers = data.order_by('specification__customer__id') \
+                                .values('specification__customer') \
+                                .distinct()
+
+        if len(distinct_customers) != 1:
+            raise ValidationError("У выбранных заказов должен быть один клиент")
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        if commit == True:
+            instance.save()
+            instance.order_set.update(exec_doc=None)
+            self.cleaned_data['orders'].update(exec_doc=instance.pk)
+
+        return instance
+

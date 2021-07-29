@@ -1,4 +1,5 @@
 from django.db         import models
+from django.db.models  import Sum, F, Q
 from safedelete.models import SafeDeleteModel
 
 class Address(models.Model):
@@ -94,6 +95,8 @@ class Order(SafeDeleteModel, models.Model):
     driver  = models.ForeignKey('Driver',   on_delete=models.PROTECT, null=True, blank=True)
     path    = models.ForeignKey('PathCost', on_delete=models.PROTECT, null=True, blank=True)
 
+    exec_doc = models.ForeignKey('Execution', on_delete=models.SET_NULL, null=True, blank=True)
+
     @property
     def price(self):
         return self.specification.price * self.count
@@ -107,3 +110,10 @@ class Order(SafeDeleteModel, models.Model):
 
     def __str__(self):
         return f'Заказ с № спец. {self.specification.doc_no} по пути: {self.path}'
+
+class Execution(models.Model):
+    exec_no  = models.PositiveIntegerField(primary_key=True)
+    date     = models.DateField()
+
+    def __str__(self):
+        return f"УПД {self.exec_no} клиента {self.customer}"

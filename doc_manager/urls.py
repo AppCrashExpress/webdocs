@@ -23,6 +23,11 @@ urlpatterns = [
     path('orders/<int:pk>/delete/', views.delete_order, name='delete_order'),
     path('orders/report/', views.OrderReportList.as_view(), name='order_report'),
 
+    path('execution/', views.ExecutionList.as_view(), name='execution'),
+    path('execution/new/', views.create_execution, name='new_execution'),
+    path('execution/<int:pk>/', views.edit_execution, name='edit_execution'),
+    path('execution/<int:pk>/delete/', views.delete_execution, name='delete_execution'),
+
     path('orders/deleted/', views.DeletedOrderList.as_view(), name='deleted_order'),
     path('orders/deleted/<int:pk>/', views.restore_order, name='restore_order'),
     path('orders/deleted/<int:pk>/delete/', views.hard_delete_order, name='hard_delete_order'),
