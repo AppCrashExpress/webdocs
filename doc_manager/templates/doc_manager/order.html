@@ -18,11 +18,19 @@
 
     {{form.count | as_crispy_field }}
 
-    {{form.specification.errors | as_crispy_errors}}
     <div id="div_id_specification" class="mb-3">
         <label class="form-label requiredField">
             {{form.specification.label}}<span class="asteriskField">*</span>
         </label>
+        {% if form.specification.errors %}
+            <div class="alert alert-block alert-danger">
+                <ul class="m-0">
+                    {% for error in form.specification.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
         <div class="container">
             <input type="text" id="from-addr-filter" placeholder="Погрузка">
             <input type="text" id="to-addr-filter" placeholder="Выгрузка">
