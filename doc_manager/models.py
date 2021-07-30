@@ -21,10 +21,10 @@ class Contractor(models.Model):
         return self.name
 
 class PathCost(models.Model):
-    path_from  = models.ForeignKey('Address', on_delete=models.PROTECT, related_name='path_from')
-    path_to    = models.ForeignKey('Address', on_delete=models.PROTECT, related_name='path_to')
+    path_from  = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='path_from')
+    path_to    = models.ForeignKey(Address, on_delete=models.PROTECT, related_name='path_to')
     cost       = models.PositiveIntegerField()
-    contractor = models.ForeignKey('Contractor', on_delete=models.PROTECT, null=True, blank=True)
+    contractor = models.ForeignKey(Contractor, on_delete=models.PROTECT, null=True, blank=True)
 
     class Meta:
         ordering = ['path_from', 'path_to']
@@ -103,10 +103,10 @@ class Specification(SafeDeleteModel, models.Model):
 
     doc_no    = models.PositiveIntegerField(unique=True)
     date      = models.DateField()
-    customer  = models.ForeignKey('Customer', on_delete=models.PROTECT)
-    from_addr = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='spec_from_addr')
-    to_addr   = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='spec_to_addr')
-    material  = models.ForeignKey('Material', on_delete=models.PROTECT)
+    customer  = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    from_addr = models.ForeignKey(Address,  on_delete=models.PROTECT, related_name='spec_from_addr')
+    to_addr   = models.ForeignKey(Address,  on_delete=models.PROTECT, related_name='spec_to_addr')
+    material  = models.ForeignKey(Material, on_delete=models.PROTECT)
     units     = models.CharField(max_length=3, choices=UNITS)
     price     = models.PositiveIntegerField()
 
@@ -132,18 +132,29 @@ class Specification(SafeDeleteModel, models.Model):
                 f'из {self.from_addr} в {self.to_addr}, '
                 f'{self.material} {self.get_units_display()}')
 
+class Execution(models.Model):
+    exec_no  = models.PositiveIntegerField(unique=True)
+    date     = models.DateField()
+
+    class Meta:
+        ordering = ['exec_no']
+
+    def __str__(self):
+        return (f'Исполн. №{self.exec_no} {self.date} '
+                f'с {self.order_set.count()} заказами')
+
 class Order(SafeDeleteModel, models.Model):
     date          = models.DateField()
-    specification = models.ForeignKey('Specification', on_delete=models.PROTECT)
+    specification = models.ForeignKey(Specification, on_delete=models.PROTECT)
     count         = models.PositiveIntegerField()
 
-    driver     = models.ForeignKey('Driver',     on_delete=models.PROTECT, null=True, blank=True)
-    contractor = models.ForeignKey('Contractor', on_delete=models.PROTECT, null=True, blank=True)
+    driver     = models.ForeignKey(Driver,     on_delete=models.PROTECT, null=True, blank=True)
+    contractor = models.ForeignKey(Contractor, on_delete=models.PROTECT, null=True, blank=True)
 
-    vehicle = models.ForeignKey('Vehicle',  on_delete=models.PROTECT, null=True, blank=True)
-    path    = models.ForeignKey('PathCost', on_delete=models.PROTECT, null=True, blank=True)
+    vehicle = models.ForeignKey(Vehicle,  on_delete=models.PROTECT, null=True, blank=True)
+    path    = models.ForeignKey(PathCost, on_delete=models.PROTECT, null=True, blank=True)
 
-    exec_doc = models.ForeignKey('Execution', on_delete=models.SET_NULL, null=True, blank=True)
+    exec_doc = models.ForeignKey(Execution, on_delete=models.SET_NULL, null=True, blank=True)
 
     @property
     def price(self):
@@ -164,14 +175,3 @@ class Order(SafeDeleteModel, models.Model):
 
     def __str__(self):
         return f'Заказ с № спец. {self.specification.doc_no} по пути: {self.path}'
-
-class Execution(models.Model):
-    exec_no  = models.PositiveIntegerField(unique=True)
-    date     = models.DateField()
-
-    class Meta:
-        ordering = ['exec_no']
-
-    def __str__(self):
-        return (f'Исполн. №{self.exec_no} {self.date} '
-                f'с {self.order_set.count()} заказами')
