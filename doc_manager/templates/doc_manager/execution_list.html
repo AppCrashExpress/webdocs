@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block table_row %}
-    <th scope="row">{{object.pk}}</th>
+    <th scope="row">{{object.exec_no}}</th>
     <td>{{object.date|date:"d.m.Y"}}</td>
     <td>{{object.order_set.all.0.specification.customer}}</td>
 {% endblock %}

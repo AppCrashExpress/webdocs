@@ -193,6 +193,8 @@ class ExecutionForm(ModelForm):
         if len(distinct_customers) != 1:
             raise ValidationError("У выбранных заказов должен быть один клиент")
 
+        return cleaned_data
+
     def save(self, commit=True):
         instance = super().save(commit=False)
 
