@@ -66,7 +66,7 @@ class Specification(SafeDeleteModel, models.Model):
         ('t',  'Тонны'),
     )
 
-    doc_no    = models.PositiveIntegerField(primary_key=True)
+    doc_no    = models.PositiveIntegerField(unique=True)
     date      = models.DateField()
     customer  = models.ForeignKey('Customer', on_delete=models.PROTECT)
     from_addr = models.ForeignKey('Address',  on_delete=models.PROTECT, related_name='spec_from_addr')
@@ -112,8 +112,8 @@ class Order(SafeDeleteModel, models.Model):
         return f'Заказ с № спец. {self.specification.doc_no} по пути: {self.path}'
 
 class Execution(models.Model):
-    exec_no  = models.PositiveIntegerField(primary_key=True)
+    exec_no  = models.PositiveIntegerField(unique=True)
     date     = models.DateField()
 
-    def __str__(self):
-        return f"УПД {self.exec_no} клиента {self.customer}"
+    class Meta:
+        ordering = ['exec_no']
