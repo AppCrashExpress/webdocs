@@ -11,6 +11,7 @@ from safedelete.models import HARD_DELETE
 
 from . import models as the_models
 from . import forms  as the_forms
+from .utils import create_generic, edit_generic
 
 class SpecificationsView(generic.ListView):
     model = the_models.Specification
@@ -39,48 +40,29 @@ class SpecificationsView(generic.ListView):
         return context
 
 def create_specification(request):
-    if request.method == "POST":
-        form = the_forms.SpecificationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('doc_manager:edit_specification', pk=form.instance.pk)
-    else:
-        form = the_forms.SpecificationForm()
-
-    context = {
-        'action': reverse('doc_manager:new_specification'),
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return create_generic(
+        request,
+        form_class=the_forms.SpecificationForm,
+        create_path_name='doc_manager:new_specification',
+        edit_path_name='doc_manager:edit_specification',
+        template_name='doc_manager/create_edit_generic.html'
+    )
 
 def edit_specification(request, pk):
     spec = the_models.Specification.objects.get(pk=pk)
-
-    if request.method == "POST":
-        form = the_forms.SpecificationForm(request.POST, instance=spec)
-        if form.is_valid():
-            form.save()
-    else:
-        form = the_forms.SpecificationForm(instance=spec)
-
-    action = reverse('doc_manager:edit_specification',
-                     kwargs={'pk':spec.pk})
-
-    
-    delete_action = reverse('doc_manager:delete_specification',
-                     kwargs={'pk':spec.pk})
-    
     related_objs = spec.order_set.all()
 
-    context = {
-        'delete_action':        delete_action,
-        'related_objects_list': related_objs,
-        'action': action,
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return edit_generic(
+        request, pk,
+        form_class=the_forms.SpecificationForm,
+        model_class=the_models.Specification,
+        edit_path_name='doc_manager:edit_specification',
+        delete_path_name='doc_manager:delete_specification',
+        template_name='doc_manager/create_edit_generic.html',
+        context_args={
+            'related_objects_list': related_objs,
+        }
+    )
 
 def delete_specification(request, pk):
     spec = the_models.Specification.objects.get(pk=pk)
@@ -159,45 +141,29 @@ class OrderList(generic.ListView):
         return context
 
 def create_order(request):
-    if request.method == "POST":
-        form = the_forms.OrderForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('doc_manager:edit_order', pk=form.instance.pk)
-    else:
-        form = the_forms.OrderForm()
-
-    context = {
-        'action':             reverse('doc_manager:new_order'),
-        'form':               form,
-        'specification_list': the_models.Specification.objects.all(),
-    }
-
-    return render(request, 'doc_manager/order.html', context=context)
+    return create_generic(
+        request,
+        form_class=the_forms.OrderForm,
+        create_path_name='doc_manager:new_order',
+        edit_path_name='doc_manager:edit_order',
+        template_name='doc_manager/order.html',
+        context_args={
+            'specification_list': the_models.Specification.objects.all(),
+        }
+    )
 
 def edit_order(request, pk):
-    order = the_models.Order.objects.get(pk=pk)
-
-    if request.method == "POST":
-        form = the_forms.OrderForm(request.POST, instance=order)
-        if form.is_valid():
-            form.save()
-    else:
-        form = the_forms.OrderForm(instance=order)
-
-    action = reverse('doc_manager:edit_order',
-                     kwargs={'pk':order.pk})
-
-    delete_action = reverse('doc_manager:delete_order',
-                     kwargs={'pk':order.pk})
-
-    context = {
-        'action':             action,
-        'delete_action':      delete_action,
-        'form':               form,
-        'specification_list': the_models.Specification.objects.all(),
-    }
-    return render(request, 'doc_manager/order.html', context=context)
+    return edit_generic(
+        request, pk,
+        form_class=the_forms.OrderForm,
+        model_class=the_models.Order,
+        edit_path_name='doc_manager:edit_order',
+        delete_path_name='doc_manager:delete_order',
+        template_name='doc_manager/order.html',
+        context_args={
+            'specification_list': the_models.Specification.objects.all(),
+        }
+    )
 
 def delete_order(request, pk):
     order = the_models.Order.objects.get(pk=pk)
@@ -304,44 +270,23 @@ class ExecutionList(generic.ListView):
         return context
 
 def create_execution(request):
-    if request.method == "POST":
-        form = the_forms.ExecutionForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('doc_manager:edit_execution', pk=form.instance.pk)
-    else:
-        form = the_forms.ExecutionForm()
-
-    context = {
-        'action': reverse('doc_manager:new_execution'),
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/execution.html', context=context)
+    return create_generic(
+        request,
+        form_class=the_forms.ExecutionForm,
+        create_path_name='doc_manager:new_execution',
+        edit_path_name='doc_manager:edit_execution',
+        template_name='doc_manager/execution.html'
+    )
 
 def edit_execution(request, pk):
-    execution = the_models.Execution.objects.get(pk=pk)
-
-    if request.method == "POST":
-        form = the_forms.ExecutionForm(request.POST, instance=execution)
-        if form.is_valid():
-            form.save()
-    else:
-        form = the_forms.ExecutionForm(instance=execution)
-
-    action = reverse('doc_manager:edit_execution',
-                     kwargs={'pk':execution.pk})
-
-    delete_action = reverse('doc_manager:delete_execution',
-                     kwargs={'pk':execution.pk})
-
-    context = {
-        'delete_action': delete_action,
-        'action': action,
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/execution.html', context=context)
+    return edit_generic(
+        request, pk,
+        form_class=the_forms.ExecutionForm,
+        model_class=the_models.Execution,
+        edit_path_name='doc_manager:edit_execution',
+        delete_path_name='doc_manager:delete_execution',
+        template_name='doc_manager/execution.html',
+    )
 
 def delete_execution(request, pk):
     execution = the_models.Execution.objects.get(pk=pk)
@@ -366,44 +311,23 @@ class AddressList(generic.ListView):
         return context
 
 def create_address(request):
-    if request.method == "POST":
-        form = the_forms.AddressForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('doc_manager:edit_address', pk=form.instance.pk)
-    else:
-        form = the_forms.AddressForm()
-
-    context = {
-        'action': reverse('doc_manager:new_address'),
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return create_generic(
+        request,
+        form_class=the_forms.AddressForm,
+        create_path_name='doc_manager:new_address',
+        edit_path_name='doc_manager:edit_address',
+        template_name='doc_manager/create_edit_generic.html'
+    )
 
 def edit_address(request, pk):
-    address = the_models.Address.objects.get(pk=pk)
-
-    if request.method == "POST":
-        form = the_forms.AddressForm(request.POST, instance=address)
-        if form.is_valid():
-            form.save()
-    else:
-        form = the_forms.AddressForm(instance=address)
-
-    action = reverse('doc_manager:edit_address',
-                     kwargs={'pk':address.pk})
-
-    delete_action = reverse('doc_manager:delete_address',
-                     kwargs={'pk':address.pk})
-
-    context = {
-        'delete_action': delete_action,
-        'action': action,
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return edit_generic(
+        request, pk,
+        form_class=the_forms.AddressForm,
+        model_class=the_models.Address,
+        edit_path_name='doc_manager:edit_address',
+        delete_path_name='doc_manager:delete_address',
+        template_name='doc_manager/create_edit_generic.html',
+    )
 
 def delete_address(request, pk):
     address = the_models.Address.objects.get(pk=pk)
@@ -428,44 +352,23 @@ class MaterialsList(generic.ListView):
         return context
 
 def create_material(request):
-    if request.method == "POST":
-        form = the_forms.MaterialForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('doc_manager:edit_material', pk=form.instance.pk)
-    else:
-        form = the_forms.MaterialForm()
-
-    context = {
-        'action': reverse('doc_manager:new_material'),
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return create_generic(
+        request,
+        form_class=the_forms.MaterialForm,
+        create_path_name='doc_manager:new_material',
+        edit_path_name='doc_manager:edit_material',
+        template_name='doc_manager/create_edit_generic.html'
+    )
 
 def edit_material(request, pk):
-    material = the_models.Material.objects.get(pk=pk)
-
-    if request.method == "POST":
-        form = the_forms.MaterialForm(request.POST, instance=material)
-        if form.is_valid():
-            form.save()
-    else:
-        form = the_forms.MaterialForm(instance=material)
-
-    action = reverse('doc_manager:edit_material',
-                     kwargs={'pk':material.pk})
-
-    delete_action = reverse('doc_manager:delete_material',
-                     kwargs={'pk':material.pk})
-
-    context = {
-        'delete_action': delete_action,
-        'action': action,
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return edit_generic(
+        request, pk,
+        form_class=the_forms.MaterialForm,
+        model_class=the_models.Material,
+        edit_path_name='doc_manager:edit_material',
+        delete_path_name='doc_manager:delete_material',
+        template_name='doc_manager/create_edit_generic.html',
+    )
 
 def delete_material(request, pk):
     material = the_models.Material.objects.get(pk=pk)
@@ -490,44 +393,23 @@ class CustomersList(generic.ListView):
         return context
 
 def create_customer(request):
-    if request.method == "POST":
-        form = the_forms.CustomerForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('doc_manager:edit_customer', pk=form.instance.pk)
-    else:
-        form = the_forms.CustomerForm()
-
-    context = {
-        'action': reverse('doc_manager:new_customer'),
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return create_generic(
+        request,
+        form_class=the_forms.CustomerForm,
+        create_path_name='doc_manager:new_customer',
+        edit_path_name='doc_manager:edit_customer',
+        template_name='doc_manager/create_edit_generic.html'
+    )
 
 def edit_customer(request, pk):
-    customer = the_models.Customer.objects.get(pk=pk)
-
-    if request.method == "POST":
-        form = the_forms.CustomerForm(request.POST, instance=customer)
-        if form.is_valid():
-            form.save()
-    else:
-        form = the_forms.CustomerForm(instance=customer)
-
-    action = reverse('doc_manager:edit_customer',
-                     kwargs={'pk':customer.pk})
-
-    delete_action = reverse('doc_manager:delete_customer',
-                     kwargs={'pk':customer.pk})
-
-    context = {
-        'delete_action': delete_action,
-        'action': action,
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return edit_generic(
+        request, pk,
+        form_class=the_forms.CustomerForm,
+        model_class=the_models.Customer,
+        edit_path_name='doc_manager:edit_customer',
+        delete_path_name='doc_manager:delete_customer',
+        template_name='doc_manager/create_edit_generic.html',
+    )
 
 def delete_customer(request, pk):
     customer = the_models.Customer.objects.get(pk=pk)
@@ -574,28 +456,14 @@ def create_vehicle(request):
     return render(request, 'doc_manager/create_edit_generic.html', context=context)
 
 def edit_vehicle(request, pk):
-    vehicle = the_models.Vehicle.objects.get(pk=pk)
-
-    if request.method == "POST":
-        form = the_forms.VehicleForm(request.POST, instance=vehicle)
-        if form.is_valid():
-            form.save()
-    else:
-        form = the_forms.VehicleForm(instance=vehicle)
-
-    action = reverse('doc_manager:edit_vehicle',
-                     kwargs={'pk':vehicle.pk})
-
-    delete_action = reverse('doc_manager:delete_vehicle',
-                     kwargs={'pk':vehicle.pk})
-
-    context = {
-        'delete_action': delete_action,
-        'action': action,
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return edit_generic(
+        request, pk,
+        form_class=the_forms.VehicleForm,
+        model_class=the_models.Vehicle,
+        edit_path_name='doc_manager:edit_vehicle',
+        delete_path_name='doc_manager:delete_vehicle',
+        template_name='doc_manager/create_edit_generic.html',
+    )
 
 def delete_vehicle(request, pk):
     vehicle = the_models.Vehicle.objects.get(pk=pk)
@@ -620,44 +488,23 @@ class DriversList(generic.ListView):
         return context
 
 def create_driver(request):
-    if request.method == "POST":
-        form = the_forms.DriverForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('doc_manager:edit_driver', pk=form.instance.pk)
-    else:
-        form = the_forms.DriverForm()
-
-    context = {
-        'action': reverse('doc_manager:new_driver'),
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return create_generic(
+        request,
+        form_class=the_forms.DriverForm,
+        create_path_name='doc_manager:new_driver',
+        edit_path_name='doc_manager:edit_driver',
+        template_name='doc_manager/create_edit_generic.html'
+    )
 
 def edit_driver(request, pk):
-    driver = the_models.Driver.objects.get(pk=pk)
-
-    if request.method == "POST":
-        form = the_forms.DriverForm(request.POST, instance=driver)
-        if form.is_valid():
-            form.save()
-    else:
-        form = the_forms.DriverForm(instance=driver)
-
-    action = reverse('doc_manager:edit_driver',
-                     kwargs={'pk':driver.pk})
-
-    delete_action = reverse('doc_manager:delete_driver',
-                     kwargs={'pk':driver.pk})
-
-    context = {
-        'delete_action': delete_action,
-        'action': action,
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return edit_generic(
+        request, pk,
+        form_class=the_forms.DriverForm,
+        model_class=the_models.Driver,
+        edit_path_name='doc_manager:edit_driver',
+        delete_path_name='doc_manager:delete_driver',
+        template_name='doc_manager/create_edit_generic.html',
+    )
 
 def delete_driver(request, pk):
     driver = the_models.Driver.objects.get(pk=pk)
@@ -709,43 +556,23 @@ class PathCostList(generic.ListView):
         return context
 
 def create_path(request):
-    if request.method == "POST":
-        form = the_forms.PathCostForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('doc_manager:edit_pathcost', pk=form.instance.pk)
-    else:
-        form = the_forms.PathCostForm()
-
-    context = {
-        'action': reverse('doc_manager:new_pathcost'),
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return create_generic(
+        request,
+        form_class=the_forms.PathCostForm,
+        create_path_name='doc_manager:new_pathcost',
+        edit_path_name='doc_manager:edit_pathcost',
+        template_name='doc_manager/create_edit_generic.html'
+    )
 
 def edit_path(request, pk):
-    pathcost = the_models.PathCost.objects.get(pk=pk)
-    if request.method == "POST":
-        form = the_forms.PathCostForm(request.POST, instance=pathcost)
-        if form.is_valid():
-            form.save()
-    else:
-        form = the_forms.PathCostForm(instance=pathcost)
-
-    action = reverse('doc_manager:edit_pathcost',
-                     kwargs={'pk':pathcost.pk})
-
-    delete_action = reverse('doc_manager:delete_pathcost',
-                     kwargs={'pk':pathcost.pk})
-
-    context = {
-        'delete_action': delete_action,
-        'action': action,
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return edit_generic(
+        request, pk,
+        form_class=the_forms.PathCostForm,
+        model_class=the_models.PathCost,
+        edit_path_name='doc_manager:edit_pathcost',
+        delete_path_name='doc_manager:delete_pathcost',
+        template_name='doc_manager/create_edit_generic.html',
+    )
 
 def delete_path(request, pk):
     path = the_models.PathCost.objects.get(pk=pk)
