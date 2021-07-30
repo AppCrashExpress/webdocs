@@ -5,6 +5,7 @@
     <th scope="col">Погрузка</th>
     <th scope="col">Выгрузка</th>
     <th scope="col">Ставка</th>
+    <th scope="col">Подрядчик</th>
 {% endblock %}
 
 {% block table_row %}
@@ -12,6 +13,7 @@
     <td>{{object.path_from}}</td>
     <td>{{object.path_to}}</td>
     <td>{{object.cost}}</td>
+    <td>{{object.contractor|default:"Нет"}}</td>
 {% endblock %}
 
 {% block no_objects_found %}

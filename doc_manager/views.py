@@ -545,6 +545,47 @@ class DriverReportList(generic.ListView):
 
         return context
 
+class ContractorsList(generic.ListView):
+    model = the_models.Contractor
+
+    def get_queryset(self):
+        name_value = self.request.GET.get('name', '')
+        queryset = self.model.objects.filter(name__icontains=name_value)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['create_path_name'] = 'doc_manager:new_contractor'
+        context['edit_path_name'] = 'doc_manager:edit_contractor'
+
+        context['name_value'] = self.request.GET.get('name', '')
+
+        return context
+
+def create_contractor(request):
+    return create_generic(
+        request,
+        form_class=the_forms.ContractorForm,
+        create_path_name='doc_manager:new_contractor',
+        edit_path_name='doc_manager:edit_contractor',
+        template_name='doc_manager/create_edit_generic.html'
+    )
+
+def edit_contractor(request, pk):
+    return edit_generic(
+        request, pk,
+        form_class=the_forms.ContractorForm,
+        model_class=the_models.Contractor,
+        edit_path_name='doc_manager:edit_contractor',
+        delete_path_name='doc_manager:delete_contractor',
+        template_name='doc_manager/create_edit_generic.html',
+    )
+
+def delete_contractor(request, pk):
+    contractor = the_models.Contractor.objects.get(pk=pk)
+    contractor.delete()
+    return redirect('doc_manager:contractor')
+
 class PathCostList(generic.ListView):
     model = the_models.PathCost
 

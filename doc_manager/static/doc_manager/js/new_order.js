@@ -36,3 +36,13 @@
     to_addr_filter.addEventListener('keyup', filter)
     mat_filter.addEventListener('keyup', filter)
 })()
+
+$(document).ready(function() {
+        // Allow of only one select element
+    $('#id_driver').on('select2:select', function (e) { $('#id_contractor').val('').trigger('change') } );
+
+    $('#id_contractor').on('select2:select', function (e) { 
+        $('#id_driver').val('').trigger('change');
+        $('#id_vehicle').val('').trigger('change');
+    });
+})

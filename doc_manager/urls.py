@@ -58,6 +58,11 @@ urlpatterns = [
     path('drivers/<int:pk>/delete/', views.delete_driver, name='delete_driver'),
     path('drivers/report/', views.DriverReportList.as_view(), name='driver_report'),
 
+    path('contractor/', views.ContractorsList.as_view(), name='contractor'),
+    path('contractor/new/', views.create_contractor, name='new_contractor'),
+    path('contractor/<int:pk>/', views.edit_contractor, name='edit_contractor'),
+    path('contractor/<int:pk>/delete/', views.delete_contractor, name='delete_contractor'),
+
     path('paths/', views.PathCostList.as_view(), name='pathcost'),
     path('paths/new/', views.create_path, name='new_pathcost'),
     path('paths/<int:pk>/', views.edit_path, name='edit_pathcost'),

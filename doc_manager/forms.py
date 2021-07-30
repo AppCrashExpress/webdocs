@@ -71,14 +71,28 @@ class DriverForm(ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
 
+class ContractorForm(ModelForm):
+    class Meta:
+        model = the_models.Contractor
+        fields = ['name']
+        labels = {
+            'name': 'Подрядчик',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
 class PathCostForm(ModelForm):
     class Meta:
         model = the_models.PathCost
         fields = '__all__'
         labels = {
-            'path_from': 'Начало пути',
-            'path_from': 'Конец пути',
-            'cost':      'Ставка',
+            'path_from':  'Начало пути',
+            'path_from':  'Конец пути',
+            'cost':       'Ставка',
+            'contractor': 'Подрядчик',
         }
 
     def __init__(self, *args, **kwargs):
@@ -116,8 +130,9 @@ class OrderForm(ModelForm):
             'date',
             'specification',
             'count',
-            'vehicle',
             'driver',
+            'contractor',
+            'vehicle',
             'path',
         ]
         widgets = {
@@ -129,8 +144,9 @@ class OrderForm(ModelForm):
             'date':          'Дата создания',
             'specification': 'Спецификация',
             'count':         'Количество',
-            'vehicle':       'Машина',
             'driver':        'Водитель',
+            'contractor':    'Подрядчик',
+            'vehicle':       'Машина',
             'path':          'Путь',
         }
 
@@ -138,6 +154,17 @@ class OrderForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        driver = cleaned_data.get('driver')
+        contractor = cleaned_data.get('contractor')
+
+        if driver is not None and contractor is not None:
+            raise ValidationError("Можно выбрать либо водителя, либо подрядчика")
+
+        return cleaned_data
 
 class ExecutionForm(ModelForm):
     class ExecutionMultipleChoiceField(forms.ModelMultipleChoiceField):

@@ -11,10 +11,20 @@ class Address(models.Model):
     def __str__(self):
         return self.name
 
+class Contractor(models.Model):
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
 class PathCost(models.Model):
-    path_from = models.ForeignKey('Address', on_delete=models.PROTECT, related_name='path_from')
-    path_to   = models.ForeignKey('Address', on_delete=models.PROTECT, related_name='path_to')
-    cost      = models.PositiveIntegerField()
+    path_from  = models.ForeignKey('Address', on_delete=models.PROTECT, related_name='path_from')
+    path_to    = models.ForeignKey('Address', on_delete=models.PROTECT, related_name='path_to')
+    cost       = models.PositiveIntegerField()
+    contractor = models.ForeignKey('Contractor', on_delete=models.PROTECT, null=True, blank=True)
 
     class Meta:
         ordering = ['path_from', 'path_to']
@@ -91,8 +101,10 @@ class Order(SafeDeleteModel, models.Model):
     specification = models.ForeignKey('Specification', on_delete=models.PROTECT)
     count         = models.PositiveIntegerField()
 
+    driver     = models.ForeignKey('Driver',     on_delete=models.PROTECT, null=True, blank=True)
+    contractor = models.ForeignKey('Contractor', on_delete=models.PROTECT, null=True, blank=True)
+
     vehicle = models.ForeignKey('Vehicle',  on_delete=models.PROTECT, null=True, blank=True)
-    driver  = models.ForeignKey('Driver',   on_delete=models.PROTECT, null=True, blank=True)
     path    = models.ForeignKey('PathCost', on_delete=models.PROTECT, null=True, blank=True)
 
     exec_doc = models.ForeignKey('Execution', on_delete=models.SET_NULL, null=True, blank=True)
@@ -106,6 +118,12 @@ class Order(SafeDeleteModel, models.Model):
         permissions = [
             ("undelete_order",    'Есть возможность восстанавливать заказы, помеченные на удаление'),
             ("hard_delete_order", 'Есть возможность удалять заказы, помеченные на удаление')
+        ]
+        constraints = [
+            models.CheckConstraint(
+                check=(Q(driver__isnull=True) | Q(contractor__isnull=True)),
+                name="order_not_both_drivers"
+            )
         ]
 
     def __str__(self):
