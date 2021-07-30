@@ -28,10 +28,35 @@ class PathCost(models.Model):
 
     class Meta:
         ordering = ['path_from', 'path_to']
-        unique_together = (('path_from', 'path_to'),)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['path_from', 'path_to', 'contractor'],
+                name='pathcost_unique_definition'
+            ),
+            models.CheckConstraint(
+                check=~Q(path_from=F('path_to')),
+                name='pathcost_path_not_loop'
+            ),
+        ]
+
+    def clean(self):
+        # Using PostgreSQL, NULL is not equal NULL, so constraint 
+        # with null will always pass. Manually check in this case
+        from django.core.exceptions import ValidationError
+        if self.contractor is None: 
+            obj_exists = PathCost.objects.filter(
+                    path_from=self.path_from,
+                    path_to=self.path_to
+                ).exists()
+
+            if obj_exists:
+                raise ValidationError('Путь с такими адресами уже существует')
 
     def __str__(self):
-        return f'Из "{self.path_from}" в "{self.path_to}" со стоимостью {self.cost}'
+        string = f'Из "{self.path_from}" в "{self.path_to}" со стоимостью {self.cost}'
+        if self.contractor:
+            string += f' и подрядчиком {self.contractor}'
+        return string
 
 class Customer(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -87,14 +112,25 @@ class Specification(SafeDeleteModel, models.Model):
 
     class Meta:
         ordering = ['doc_no']
-        unique_together = (('customer', 'from_addr', 'to_addr', 'material'),)
         permissions = [
             ("undelete_specification",    'Есть возможность восстанавливать спецификации, помеченные на удаление'),
             ("hard_delete_specification", 'Есть возможность удалять спецификации, помеченные на удаление')
         ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['customer', 'from_addr', 'to_addr', 'material', 'units'],
+                name='specification_unique_definition'
+            ),
+            models.CheckConstraint(
+                check=~Q(from_addr=F('to_addr')),
+                name='specification_path_not_loop'
+            ),
+        ]
 
     def __str__(self):
-        return f'Спецификация {self.doc_no} из "{self.from_addr}" в "{self.to_addr}"'
+        return (f'Спец. №{self.doc_no} {self.date} заказчика {self.customer}, '
+                f'из {self.from_addr} в {self.to_addr}, '
+                f'{self.material} {self.get_units_display()}')
 
 class Order(SafeDeleteModel, models.Model):
     date          = models.DateField()
@@ -135,3 +171,7 @@ class Execution(models.Model):
 
     class Meta:
         ordering = ['exec_no']
+
+    def __str__(self):
+        return (f'Исполн. №{self.exec_no} {self.date} '
+                f'с {self.order_set.count()} заказами')
