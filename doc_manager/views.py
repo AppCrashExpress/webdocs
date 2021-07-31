@@ -179,7 +179,17 @@ def edit_order(request, pk):
 
 def delete_order(request, pk):
     order = the_models.Order.objects.get(pk=pk)
+
+    if order.exec_doc is not None:
+        message = f'Невозможно удалить, так как заказ связан с УПД'
+        messages.error(request, message)
+        return redirect('doc_manager:edit_order', pk=order.pk)
+
+    order_str = str(order)
     order.delete()
+    message = f'Удалено: {order_str}'
+    messages.success(request, message)
+
     return redirect('doc_manager:order')
 
 class OrderReportList(generic.ListView):
