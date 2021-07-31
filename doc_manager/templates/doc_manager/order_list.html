@@ -10,6 +10,7 @@
     <th scope="col">Сумма</th>
     <th scope="col">Машина</th>
     <th scope="col">Водитель</th>
+    <th scope="col">Подрядчик</th>
     <th scope="col">Фактич.<br>погрузка</th>
     <th scope="col">Фактич.<br>выгрузка</th>
     <th scope="col">Ставка</th>
@@ -25,6 +26,7 @@
     <td>{{object.price}}</td>
     <td>{{object.vehicle|default:""}}</td>
     <td>{{object.driver|default:""}}</td>
+    <td>{{object.contractor|default:""}}</td>
     <td>{{object.path.path_from|default:""}}</td>
     <td>{{object.path.path_to|default:""}}</td>
     <td>{{object.path.cost|default:""}}</td>
