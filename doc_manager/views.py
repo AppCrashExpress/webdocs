@@ -185,6 +185,11 @@ def delete_order(request, pk):
         messages.error(request, message)
         return redirect('doc_manager:edit_order', pk=order.pk)
 
+    if order.contr_doc is not None:
+        message = f'Невозможно удалить, так как заказ связан с УПД подрядчика'
+        messages.error(request, message)
+        return redirect('doc_manager:edit_order', pk=order.pk)
+
     order_str = str(order)
     order.delete()
     message = f'Удалено: {order_str}'
@@ -293,6 +298,12 @@ def hard_delete_order(request, pk):
 class ExecutionList(generic.ListView):
     model = the_models.Execution
 
+    def get_queryset(self):
+        queryset = self.model.objects.filter(
+                       order__contractor__isnull=True
+                   ).distinct()
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['create_path_name'] = 'doc_manager:new_execution'
@@ -324,6 +335,43 @@ def delete_execution(request, pk):
         request, pk,
         model_class=the_models.Execution,
         list_url_name='doc_manager:execution'
+    )
+
+class ContractorExecutionList(generic.ListView):
+    model = the_models.ContractorExecution
+    template_name = 'doc_manager/contractor_execution_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['create_path_name'] = 'doc_manager:new_contractor_execution'
+        context['edit_path_name'] = 'doc_manager:edit_contractor_execution'
+
+        return context
+
+def create_contractor_execution(request):
+    return create_generic(
+        request,
+        form_class=the_forms.ContractorExecutionForm,
+        create_path_name='doc_manager:new_contractor_execution',
+        edit_path_name='doc_manager:edit_contractor_execution',
+        template_name='doc_manager/contractor_execution.html'
+    )
+
+def edit_contractor_execution(request, pk):
+    return edit_generic(
+        request, pk,
+        form_class=the_forms.ContractorExecutionForm,
+        model_class=the_models.ContractorExecution,
+        edit_path_name='doc_manager:edit_contractor_execution',
+        delete_path_name='doc_manager:delete_contractor_execution',
+        template_name='doc_manager/contractor_execution.html',
+    )
+
+def delete_contractor_execution(request, pk):
+    return delete_generic(
+        request, pk,
+        model_class=the_models.ContractorExecution,
+        list_url_name='doc_manager:contractor_execution'
     )
 
 class AddressList(generic.ListView):

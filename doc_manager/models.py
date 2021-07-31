@@ -144,6 +144,25 @@ class Execution(models.Model):
         return (f'Исполн. №{self.exec_no} {self.date} '
                 f'с {self.order_set.count()} заказами')
 
+class ContractorExecution(models.Model):
+    exec_no    = models.PositiveIntegerField()
+    date       = models.DateField()
+    contractor = models.ForeignKey(Contractor, on_delete=models.PROTECT)
+
+    class Meta:
+        ordering = ['exec_no', 'contractor']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['exec_no', 'contractor'],
+                name='cont_exec_unique_definition'
+            ),
+        ]
+
+    def __str__(self):
+        return (f'Исполн. №{self.exec_no} {self.date} подрядчика '
+                f'{self.contractor} '
+                f'с {self.order_set.count()} заказами')
+
 class Order(SafeDeleteModel, models.Model):
     date          = models.DateField()
     specification = models.ForeignKey(Specification, on_delete=models.PROTECT)
@@ -156,6 +175,7 @@ class Order(SafeDeleteModel, models.Model):
     path    = models.ForeignKey(PathCost, on_delete=models.PROTECT, null=True, blank=True)
 
     exec_doc = models.ForeignKey(Execution, on_delete=models.SET_NULL, null=True, blank=True)
+    contr_doc = models.ForeignKey(ContractorExecution, on_delete=models.SET_NULL, null=True, blank=True)
 
     @property
     def price(self):
@@ -171,7 +191,11 @@ class Order(SafeDeleteModel, models.Model):
             models.CheckConstraint(
                 check=(Q(driver__isnull=True) | Q(contractor__isnull=True)),
                 name="order_not_both_drivers"
-            )
+            ),
+            models.CheckConstraint(
+                check=(Q(exec_doc__isnull=True) | Q(contr_doc__isnull=True)),
+                name="order_not_both_docs"
+            ),
         ]
 
     def __str__(self):

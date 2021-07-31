@@ -228,7 +228,11 @@ class ExecutionForm(ModelForm):
         order_filter = Q(exec_doc__isnull=True)
         if self.instance.pk:
             order_filter |= Q(exec_doc=self.instance.pk)
-        self.fields['orders'].queryset = the_models.Order.objects.filter(order_filter)
+
+        self.fields['orders'].queryset = the_models.Order.objects.filter(
+                order_filter & Q(contractor__isnull=True)
+            )
+
         if self.instance.pk:
             self.fields['orders'].initial = self.instance.order_set.all()
 
@@ -260,6 +264,82 @@ class ExecutionForm(ModelForm):
             instance.save()
             instance.order_set.update(exec_doc=None)
             self.cleaned_data['orders'].update(exec_doc=instance.pk)
+
+        return instance
+
+class ContractorExecutionForm(ModelForm):
+    class ExecutionMultipleChoiceField(forms.ModelMultipleChoiceField):
+        def label_from_instance(self, obj):
+            return (f'<th scope="row">{obj.pk}</td>'
+                    f'<td>{obj.date}</td>'
+                    f'<td>{obj.specification.pk}</td>'
+                    f'<td>{obj.contractor}</td>')
+
+    class Meta:
+        model  = the_models.ContractorExecution
+        fields = '__all__'
+        widgets = {
+            'date': DateInput(format=('%Y-%m-%d'),
+                              attrs={'type': 'date'}),
+        }
+        labels = {
+            'exec_no':    'Номер УПД',
+            'date':       'Дата создания',
+            'contractor': 'Подрядчик',
+        }
+
+    orders = ExecutionMultipleChoiceField(
+        label='Заказы',
+        widget=CheckboxSelectMultiple(),
+        queryset=None
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+        order_filter = Q(contr_doc__isnull=True)
+        if self.instance.pk:
+            order_filter |= Q(contr_doc=self.instance.pk)
+
+        self.fields['orders'].queryset = the_models.Order.objects.filter(
+                order_filter & Q(contractor__isnull=False)
+            )
+
+        if self.instance.pk:
+            self.fields['orders'].initial = self.instance.order_set.all()
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        data = cleaned_data.get('orders')
+        selected_contractor = cleaned_data.get('contractor')
+
+        if not data or len(data) == 0:
+            raise ValidationError("Должен быть выбран хотя бы один заказ")
+
+        distinct_contractors = data.order_by('contractor__id') \
+                                .values('contractor') \
+                                .distinct()
+        if len(distinct_contractors) != 1:
+            raise ValidationError("У выбранных заказов должен быть один подрядчик")
+
+        contractor_id = distinct_contractors[0]['contractor'] 
+
+        if contractor_id != selected_contractor.id:
+            raise ValidationError("Подрядчик у закакзов должен совпадать с выбранным")
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        if commit == True:
+            instance.save()
+            instance.order_set.update(contr_doc=None)
+            self.cleaned_data['orders'].update(contr_doc=instance.pk)
 
         return instance
 

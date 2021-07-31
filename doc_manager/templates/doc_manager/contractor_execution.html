@@ -1,0 +1,127 @@
+{% extends "base_generic.html" %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block head_addendum %}
+    <link rel="stylesheet" href="{% static 'doc_manager/css/styles.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li class="alert {% if message.tags %}{{ message.tags }}{% else %}alert-primary{% endif %}"
+      role="alert">
+        {{ message }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form action="{{ action }}" method="post">
+    {% csrf_token %}
+
+    {{form | as_crispy_errors}}
+
+    {{form.exec_no | as_crispy_field}}
+
+    {{form.date | as_crispy_field}}
+
+    {{form.contractor | as_crispy_field}}
+
+    <div id="div_id_orders" class="mb-3">
+        <label class="form-label requiredField">
+            {{form.orders.label}}<span class="asteriskField">*</span>
+        </label>
+        <div class="container">
+            <input type="text" id="spec-id-filter" placeholder="Номер спец.">
+            <input type="date" id="start-date-filter" placeholder="">
+            <input type="date" id="end-date-filter" placeholder="">
+            <div class="table-responisve scrollable-table-wrapper">
+                <table id="order-table" class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Дата<br>создания</th>
+                            <th scope="col">Номер<br>спец.</th>
+                            <th scope="col">Подрядчик</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for radio in form.orders %}
+                        <tr>
+                            {{ radio.choice_label | safe }}
+                            <td>
+                                {{ radio.tag }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {{form.orders.errors | as_crispy_errors}}
+
+    {% if form.instance.pk %}
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-modal">
+        Удалить
+    </button>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary">
+        {% if form.instance.pk %}
+            Изменить
+        {% else%}
+            Добавить
+        {% endif %}
+    </button>
+
+</form>
+
+{% if form.instance.pk %}
+<form action="{{ delete_action }}" method="post">
+    {% csrf_token %}
+
+    <div class="modal fade" id="delete-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Удаление объекта</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                {% if related_objects_list %}
+                    Невозможно удалить объект, так как от него зависят следющие объекты:
+                    <ul>
+                    {% for object in related_objects_list %}
+                        <li>{{object.pk}}: {{object}}</li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    Удалить объект?
+                {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    {% if not related_objects_list %}
+                    <button type="submit" class="btn btn-primary">Удалить</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+{% endif %}
+
+{% endblock %}
+
+
+{% block body_scripts %}
+    <script src="{% static 'doc_manager/js/select_search.js' %}"></script>
+    <script src="{% static 'doc_manager/js/contractor_execution.js' %}"></script>
+{% endblock %}
