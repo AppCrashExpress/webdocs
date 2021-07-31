@@ -2,6 +2,18 @@
 
 {% block content %}
 
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li class="alert {% if message.tags %}{{ message.tags }}{% else %}alert-primary{% endif %}"
+      role="alert">
+        {{ message }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 <div class="container">
     <div class="container">
         {% block table_input %}{% endblock %}

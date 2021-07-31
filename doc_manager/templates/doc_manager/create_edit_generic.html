@@ -5,6 +5,17 @@
 
 {% block content %}
 
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li class="alert {% if message.tags %}{{ message.tags }}{% else %}alert-primary{% endif %}"
+      role="alert">
+        {{ message }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 <form action="{{ action }}" method="post">
 
     {% crispy form %}

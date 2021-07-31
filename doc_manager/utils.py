@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls      import reverse
+from django.contrib   import messages
 
 def create_generic(
     request, *, form_class,
@@ -10,7 +11,12 @@ def create_generic(
         form = form_class(request.POST)
         if form.is_valid():
             form.save()
+
+            message = f'Создано: {form.instance}'
+            messages.success(request, message)
+
             return redirect(edit_path_name, pk=form.instance.pk)
+
     else:
         form = form_class()
 
@@ -33,6 +39,9 @@ def edit_generic(
         form = form_class(request.POST, instance=instance)
         if form.is_valid():
             form.save()
+
+            message = f'Изменено: {form.instance}'
+            messages.success(request, message)
     else:
         form = form_class(instance=instance)
 

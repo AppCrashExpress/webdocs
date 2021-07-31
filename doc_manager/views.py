@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins     import PermissionRequiredMixin
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib   import messages
 from django.views     import generic
 from django.urls      import reverse
 
@@ -106,6 +107,10 @@ def restore_specification(request, pk):
         form = the_forms.SpecificationForm(request.POST, instance=spec)
         if form.is_valid():
             form.save()
+
+            message = f'Восстановлено: {form.instance}'
+            messages.success(request, message)
+
             return redirect('doc_manager:edit_specification', pk=form.instance.pk)
     else:
         form = the_forms.SpecificationForm(instance=spec)
@@ -127,7 +132,12 @@ def restore_specification(request, pk):
 @permission_required('doc_manager.hard_delete_specification')
 def hard_delete_specification(request, pk):
     spec = the_models.Specification.objects.deleted_only().get(pk=pk)
+    spec_str = str(spec)
     spec.delete(force_policy=HARD_DELETE)
+
+    message = f'Удалено: {spec_str}'
+    messages.success(request, message)
+
     return redirect('doc_manager:deleted_specification')
 
 class OrderList(generic.ListView):
@@ -235,6 +245,10 @@ def restore_order(request, pk):
         form = the_forms.OrderForm(request.POST, instance=order)
         if form.is_valid():
             form.save()
+
+            message = f'Восстановлено: {form.instance}'
+            messages.success(request, message)
+
             return redirect('doc_manager:edit_order', pk=form.instance.pk)
     else:
         form = the_forms.OrderForm(instance=order)
@@ -256,7 +270,12 @@ def restore_order(request, pk):
 @permission_required('doc_manager.hard_delete_order')
 def hard_delete_order(request, pk):
     order = the_models.Order.objects.deleted_only().get(pk=pk)
+    order_str = str(order)
     order.delete(force_policy=HARD_DELETE)
+
+    message = f'Удалено: {order_str}'
+    messages.success(request, message)
+
     return redirect('doc_manager:deleted_order')
 
 class ExecutionList(generic.ListView):
@@ -440,20 +459,13 @@ class VehiclesList(generic.ListView):
         return context
 
 def create_vehicle(request):
-    if request.method == "POST":
-        form = the_forms.VehicleForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('doc_manager:edit_vehicle', pk=form.instance.pk)
-    else:
-        form = the_forms.VehicleForm()
-
-    context = {
-        'action': reverse('doc_manager:new_vehicle'),
-        'form':   form,
-    }
-
-    return render(request, 'doc_manager/create_edit_generic.html', context=context)
+    return create_generic(
+        request,
+        form_class=the_forms.VehicleForm,
+        create_path_name='doc_manager:new_vehicle',
+        edit_path_name='doc_manager:edit_vehicle',
+        template_name='doc_manager/create_edit_generic.html'
+    )
 
 def edit_vehicle(request, pk):
     return edit_generic(
