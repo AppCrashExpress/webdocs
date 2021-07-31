@@ -299,9 +299,11 @@ class ExecutionList(generic.ListView):
     model = the_models.Execution
 
     def get_queryset(self):
-        queryset = self.model.objects.filter(
-                       order__contractor__isnull=True
-                   ).distinct()
+        queryset = self.model.objects.all()
+        queryset = queryset.annotate(
+            sum=Sum(F('order__count') * F('order__specification__price'))
+        )
+
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -340,6 +342,14 @@ def delete_execution(request, pk):
 class ContractorExecutionList(generic.ListView):
     model = the_models.ContractorExecution
     template_name = 'doc_manager/contractor_execution_list.html'
+
+    def get_queryset(self):
+        queryset = self.model.objects.all()
+        queryset = queryset.annotate(
+            sum=Sum(F('order__count') * F('order__specification__price'))
+        )
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

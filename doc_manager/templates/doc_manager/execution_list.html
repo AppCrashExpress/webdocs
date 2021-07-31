@@ -4,12 +4,14 @@
     <th scope="col">#</th>
     <th scope="col">Дата</th>
     <th scope="col">Клиент</th>
+    <th scope="col">Сумма</th>
 {% endblock %}
 
 {% block table_row %}
     <th scope="row">{{object.exec_no}}</th>
     <td>{{object.date|date:"d.m.Y"}}</td>
     <td>{{object.order_set.all.0.specification.customer}}</td>
+    <td>{{object.sum}}</td>
 {% endblock %}
 
 {% block no_objects_found %}
