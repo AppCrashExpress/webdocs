@@ -60,3 +60,13 @@ def edit_generic(
     }
 
     return render(request, template_name, context=context)
+
+def delete_generic(request, pk, *, model_class, list_url_name):
+    instance = model_class.objects.get(pk=pk)
+    inst_str = str(instance)
+    instance.delete()
+
+    message = f'Удалено: {inst_str}'
+    messages.success(request, message)
+
+    return redirect(list_url_name)

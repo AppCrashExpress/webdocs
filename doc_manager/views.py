@@ -12,7 +12,7 @@ from safedelete.models import HARD_DELETE
 
 from . import models as the_models
 from . import forms  as the_forms
-from .utils import create_generic, edit_generic
+from .utils import create_generic, edit_generic, delete_generic
 
 class SpecificationsView(generic.ListView):
     model = the_models.Specification
@@ -66,9 +66,11 @@ def edit_specification(request, pk):
     )
 
 def delete_specification(request, pk):
-    spec = the_models.Specification.objects.get(pk=pk)
-    spec.delete()
-    return redirect('doc_manager:specification')
+    return delete_generic(
+        request, pk,
+        model_class=the_models.Specification,
+        list_url_name='doc_manager:specification'
+    )
 
 class DeletedSpecificationsView(PermissionRequiredMixin, generic.ListView):
     model = the_models.Specification
@@ -308,9 +310,11 @@ def edit_execution(request, pk):
     )
 
 def delete_execution(request, pk):
-    execution = the_models.Execution.objects.get(pk=pk)
-    execution.delete()
-    return redirect('doc_manager:execution')
+    return delete_generic(
+        request, pk,
+        model_class=the_models.Execution,
+        list_url_name='doc_manager:execution'
+    )
 
 class AddressList(generic.ListView):
     model = the_models.Address
@@ -349,9 +353,11 @@ def edit_address(request, pk):
     )
 
 def delete_address(request, pk):
-    address = the_models.Address.objects.get(pk=pk)
-    address.delete()
-    return redirect('doc_manager:address')
+    return delete_generic(
+        request, pk,
+        model_class=the_models.Address,
+        list_url_name='doc_manager:address'
+    )
 
 class MaterialsList(generic.ListView):
     model = the_models.Material
@@ -390,9 +396,11 @@ def edit_material(request, pk):
     )
 
 def delete_material(request, pk):
-    material = the_models.Material.objects.get(pk=pk)
-    material.delete()
-    return redirect('doc_manager:material')
+    return delete_generic(
+        request, pk,
+        model_class=the_models.Material,
+        list_url_name='doc_manager:material'
+    )
 
 class CustomersList(generic.ListView):
     model = the_models.Customer
@@ -431,9 +439,11 @@ def edit_customer(request, pk):
     )
 
 def delete_customer(request, pk):
-    customer = the_models.Customer.objects.get(pk=pk)
-    customer.delete()
-    return redirect('doc_manager:customer')
+    return delete_generic(
+        request, pk,
+        model_class=the_models.Customer,
+        list_url_name='doc_manager:customer'
+    )
 
 class VehiclesList(generic.ListView):
     model = the_models.Vehicle
@@ -478,9 +488,11 @@ def edit_vehicle(request, pk):
     )
 
 def delete_vehicle(request, pk):
-    vehicle = the_models.Vehicle.objects.get(pk=pk)
-    vehicle.delete()
-    return redirect('doc_manager:vehicle')
+    return delete_generic(
+        request, pk,
+        model_class=the_models.Vehicle,
+        list_url_name='doc_manager:vehicle'
+    )
 
 class DriversList(generic.ListView):
     model = the_models.Driver
@@ -519,9 +531,11 @@ def edit_driver(request, pk):
     )
 
 def delete_driver(request, pk):
-    driver = the_models.Driver.objects.get(pk=pk)
-    driver.delete()
-    return redirect('doc_manager:driver')
+    return delete_generic(
+        request, pk,
+        model_class=the_models.Driver,
+        list_url_name='doc_manager:driver'
+    )
 
 class DriverReportList(generic.ListView):
     model = the_models.Order
@@ -594,9 +608,11 @@ def edit_contractor(request, pk):
     )
 
 def delete_contractor(request, pk):
-    contractor = the_models.Contractor.objects.get(pk=pk)
-    contractor.delete()
-    return redirect('doc_manager:contractor')
+    return delete_generic(
+        request, pk,
+        model_class=the_models.Contractor,
+        list_url_name='doc_manager:contractor'
+    )
 
 class PathCostList(generic.ListView):
     model = the_models.PathCost
@@ -628,7 +644,8 @@ def edit_path(request, pk):
     )
 
 def delete_path(request, pk):
-    path = the_models.PathCost.objects.get(pk=pk)
-    path.delete()
-    return redirect('doc_manager:pathcost')
-
+    return delete_generic(
+        request, pk,
+        model_class=the_models.PathCost,
+        list_url_name='doc_manager:pathcost'
+    )
