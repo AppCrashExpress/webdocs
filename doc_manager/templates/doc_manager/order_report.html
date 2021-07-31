@@ -32,6 +32,8 @@
     <th scope="col">Кол-во</th>
     <th scope="col">Сумма</th>
     <th scope="col">УПД</th>
+    <th scope="col">Номер<br>УПД</th>
+    <th scope="col">Дата<br>УПД</th>
 {% endblock %}
 
 {% block table_row %}
@@ -46,6 +48,8 @@
     <td>{{object.count}}</td>
     <td>{{object.price}}</td>
     <td>{{object.exec_doc|yesno:"Да,Нет"}}</td>
+    <td>{{object.exec_doc.exec_no|default:""}}</td>
+    <td>{{object.exec_doc.date|date:"d.m.Y"|default:""}}</td>
 {% endblock %}
 
 {% block post_table %}
