@@ -605,6 +605,7 @@ class DriverReportList(generic.ListView):
         end_date_value   = self.request.GET.get('end_date')
 
         queryset = self.model.objects.filter(path__isnull=False)
+        queryset = queryset.filter(driver__isnull=False)
 
         if driver_id:
             queryset = queryset.filter(driver=driver_id)
