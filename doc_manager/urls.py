@@ -62,6 +62,7 @@ urlpatterns = [
     path('contractor/new/', views.create_contractor, name='new_contractor'),
     path('contractor/<int:pk>/', views.edit_contractor, name='edit_contractor'),
     path('contractor/<int:pk>/delete/', views.delete_contractor, name='delete_contractor'),
+    path('contractor/report/', views.ContractorReportList.as_view(), name='contractor_report'),
 
     path('contractor/execution/', 
          views.ContractorExecutionList.as_view(),

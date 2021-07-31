@@ -683,6 +683,41 @@ def delete_contractor(request, pk):
         list_url_name='doc_manager:contractor'
     )
 
+class ContractorReportList(generic.ListView):
+    model = the_models.Order
+    template_name="doc_manager/contractor_report.html"
+
+    def get_queryset(self):
+        contractor_id    = self.request.GET.get('contractor')
+        start_date_value = self.request.GET.get('start_date')
+        end_date_value   = self.request.GET.get('end_date')
+
+        queryset = self.model.objects.filter(path__isnull=False)
+        queryset = queryset.filter(contractor__isnull=False)
+
+        if contractor_id:
+            queryset = queryset.filter(contractor=contractor_id)
+        if start_date_value:
+            queryset = queryset.filter(date__gte=start_date_value)
+        if end_date_value:
+            queryset = queryset.filter(date__lte=end_date_value)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['contractor_list']  = the_models.Contractor.objects.all()
+        context['contractor_value'] = self.request.GET.get('contractor', '')
+        context['start_date_value'] = self.request.GET.get('start_date', '')
+        context['end_date_value']   = self.request.GET.get('end_date', '')
+
+        context['total'] = self.get_queryset().aggregate(
+            total=Sum('path__cost')
+        )['total']
+
+        return context
+
 class PathCostList(generic.ListView):
     model = the_models.PathCost
 

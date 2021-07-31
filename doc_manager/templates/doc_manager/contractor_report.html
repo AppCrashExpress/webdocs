@@ -1,0 +1,62 @@
+{% extends "doc_manager/table_generic.html" %}
+
+
+{% block table_input %}
+<form method="GET">
+    <select name="contractor">
+        <option value="">---------</option>
+        {% for contractor in contractor_list %}
+        <option value="{{contractor.pk}}"
+                {% if contractor.pk == contractor_value|add:"0" %}selected{% endif %}>
+            {{contractor}}
+        </option>
+        {% endfor %}
+    </select>
+    <label for="id_start_date">Начало: </label>
+    <input type="date" id="id_start_date" name="start_date" value="{{start_date_value}}">
+    <label for="id_end_date">Конец: </label>
+    <input type="date" id="id_end_date" name="end_date" value="{{end_date_value}}">
+    <button type="submit">Найти</button>
+</form>
+{% endblock %}
+
+{% block table_header %}
+    <th scope="col">#</th>
+    <th scope="col">Подрядчик</th>
+    <th scope="col">Дата</th>
+    <th scope="col">Фактич.<br>погрузка</th>
+    <th scope="col">Фактич.<br>выгрузка</th>
+    <th scope="col">Ставка</th>
+    <th scope="col">УПД</th>
+    <th scope="col">Номер<br>УПД</th>
+    <th scope="col">Дата<br>УПД</th>
+{% endblock %}
+
+{% block table_row %}
+    <th scope="row">{{object.id}}</th>
+    <td>{{object.contractor}}</td>
+    <td>{{object.date|date:"d.m.Y"}}</td>
+    <td>{{object.path.path_from}}</td>
+    <td>{{object.path.path_to}}</td>
+    <td>{{object.path.cost}}</td>
+    <td>{{object.contr_doc|yesno:"Да,Нет"}}</td>
+    <td>{{object.contr_doc.exec_no|default:""}}</td>
+    <td>{{object.contr_doc.date|date:"d.m.Y"|default:""}}</td>
+{% endblock %}
+
+{% block table_footer %}
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <th scope="row">Итог:</th>
+    <td>{{ total }}</td>
+{% endblock %}
+
+{% block no_objects_found %}
+    <p>Поездок не найдено</p>
+{% endblock %}
+
