@@ -46,7 +46,8 @@ class PathCost(models.Model):
         if self.contractor is None: 
             obj_exists = PathCost.objects.filter(
                     path_from=self.path_from,
-                    path_to=self.path_to
+                    path_to=self.path_to,
+                    contractor__isnull=True
                 ).exists()
 
             if obj_exists:
