@@ -100,6 +100,17 @@ class PathCostForm(ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
 
+    def clean(self):
+        cleaned_data = super().clean()
+
+        path_from = cleaned_data.get('path_from')
+        path_to   = cleaned_data.get('path_to')
+
+        if path_from == path_to:
+            raise ValidationError('Начальный и конечный пути не должны совпадать')
+
+        return cleaned_data
+
 class SpecificationForm(ModelForm):
     class Meta:
         model = the_models.Specification
@@ -111,6 +122,7 @@ class SpecificationForm(ModelForm):
         labels = {
             'doc_no':    'Номер документа',
             'date':      'Дата создания',
+            'customer':  'Заказчик',
             'from_addr': 'Начальный адрес',
             'to_addr':   'Конечный адрес',
             'material':  'Материал',
@@ -122,6 +134,17 @@ class SpecificationForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        from_addr = cleaned_data.get('from_addr')
+        to_addr   = cleaned_data.get('to_addr')
+
+        if from_addr == to_addr:
+            raise ValidationError('Начальный и конечный пути не должны совпадать')
+
+        return cleaned_data
 
 class OrderForm(ModelForm):
     class Meta:
@@ -160,9 +183,13 @@ class OrderForm(ModelForm):
 
         driver = cleaned_data.get('driver')
         contractor = cleaned_data.get('contractor')
+        path = cleaned_data.get('path')
 
         if driver is not None and contractor is not None:
             raise ValidationError("Можно выбрать либо водителя, либо подрядчика")
+
+        if contractor != path.contractor:
+            raise ValidationError('Подрядчик должен совпадать с указанным в пути')
 
         return cleaned_data
 
@@ -219,6 +246,10 @@ class ExecutionForm(ModelForm):
 
         if len(distinct_customers) != 1:
             raise ValidationError("У выбранных заказов должен быть один клиент")
+
+        contractors_present = data.filter(contractor__isnull=False).exists()
+        if contractors_present:
+            raise ValidationError("У выбранных заказов не может быть подрядчиков")
 
         return cleaned_data
 
