@@ -9,9 +9,6 @@ class AddressForm(ModelForm):
     class Meta:
         model = the_models.Address
         fields = ['name']
-        labels = {
-            'name': 'Полный адрес',
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -22,9 +19,6 @@ class MaterialForm(ModelForm):
     class Meta:
         model = the_models.Material
         fields = ['name']
-        labels = {
-            'name': 'Материал',
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -35,9 +29,6 @@ class CustomerForm(ModelForm):
     class Meta:
         model = the_models.Customer
         fields = '__all__'
-        labels = {
-            'name': 'Клиент',
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -48,10 +39,6 @@ class VehicleForm(ModelForm):
     class Meta:
         model = the_models.Vehicle
         fields = '__all__'
-        labels = {
-            'car_id': 'Номер',
-            'model':  'Модель',
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -62,9 +49,6 @@ class DriverForm(ModelForm):
     class Meta:
         model = the_models.Driver
         fields = '__all__'
-        labels = {
-            'name': 'ФИО',
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -75,9 +59,6 @@ class ContractorForm(ModelForm):
     class Meta:
         model = the_models.Contractor
         fields = ['name']
-        labels = {
-            'name': 'Подрядчик',
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -88,12 +69,6 @@ class PathCostForm(ModelForm):
     class Meta:
         model = the_models.PathCost
         fields = '__all__'
-        labels = {
-            'path_from':  'Начало пути',
-            'path_from':  'Конец пути',
-            'cost':       'Ставка',
-            'contractor': 'Подрядчик',
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -118,16 +93,6 @@ class SpecificationForm(ModelForm):
         widgets = {
             'date': DateInput(format=('%Y-%m-%d'),
                               attrs={'type': 'date'}),
-        }
-        labels = {
-            'doc_no':    'Номер документа',
-            'date':      'Дата создания',
-            'customer':  'Заказчик',
-            'from_addr': 'Начальный адрес',
-            'to_addr':   'Конечный адрес',
-            'material':  'Материал',
-            'units':     'Единицы измерения',
-            'price':     'Цена',
         }
 
     def __init__(self, *args, **kwargs):
@@ -162,15 +127,6 @@ class OrderForm(ModelForm):
             'date': DateInput(format=('%Y-%m-%d'),
                               attrs={'type': 'date'}),
             'specification': RadioSelect(),
-        }
-        labels = {
-            'date':          'Дата создания',
-            'specification': 'Спецификация',
-            'count':         'Количество',
-            'driver':        'Водитель',
-            'contractor':    'Подрядчик',
-            'vehicle':       'Машина',
-            'path':          'Путь',
         }
 
     def __init__(self, *args, **kwargs):
@@ -207,10 +163,6 @@ class ExecutionForm(ModelForm):
         widgets = {
             'date': DateInput(format=('%Y-%m-%d'),
                               attrs={'type': 'date'}),
-        }
-        labels = {
-            'exec_no': 'Номер УПД',
-            'date':    'Дата создания',
         }
 
     orders = ExecutionMultipleChoiceField(
@@ -281,11 +233,6 @@ class ContractorExecutionForm(ModelForm):
         widgets = {
             'date': DateInput(format=('%Y-%m-%d'),
                               attrs={'type': 'date'}),
-        }
-        labels = {
-            'exec_no':    'Номер УПД',
-            'date':       'Дата создания',
-            'contractor': 'Подрядчик',
         }
 
     orders = ExecutionMultipleChoiceField(
