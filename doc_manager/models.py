@@ -125,7 +125,7 @@ class Specification(SafeDeleteModel, models.Model):
         ('t',  'т'),
     )
 
-    doc_no    = models.PositiveIntegerField("Номер", unique=True)
+    doc_no    = models.PositiveIntegerField("Номер")
     date      = models.DateField("Дата создания")
     units     = models.CharField("Ед. изм.", max_length=3, choices=UNITS)
     price     = models.PositiveIntegerField("Цена за ед.")
@@ -158,6 +158,10 @@ class Specification(SafeDeleteModel, models.Model):
         ]
         constraints = [
             models.UniqueConstraint(
+                fields=['doc_no', 'customer'],
+                name='specification_unique_per_customer'
+            ),
+            models.UniqueConstraint(
                 fields=['customer', 'from_addr', 'to_addr', 'material', 'units'],
                 name='specification_unique_definition'
             ),
@@ -179,7 +183,7 @@ class Execution(models.Model):
     class Meta:
         verbose_name = "УПД"
         verbose_name_plural = "УПД"
-        ordering = ['exec_no']
+        ordering = ['date']
 
     def __str__(self):
         return (f'Исполн. №{self.exec_no} {self.date} '
@@ -196,7 +200,7 @@ class ContractorExecution(models.Model):
     class Meta:
         verbose_name = "УПД подрядчика"
         verbose_name_plural = "УПД подрядчика"
-        ordering = ['exec_no', 'contractor']
+        ordering = ['date', 'contractor']
         constraints = [
             models.UniqueConstraint(
                 fields=['exec_no', 'contractor'],
@@ -272,10 +276,6 @@ class Order(SafeDeleteModel, models.Model):
             models.CheckConstraint(
                 check=(Q(driver__isnull=True) | Q(contractor__isnull=True)),
                 name="order_not_both_drivers"
-            ),
-            models.CheckConstraint(
-                check=(Q(exec_doc__isnull=True) | Q(contr_doc__isnull=True)),
-                name="order_not_both_docs"
             ),
         ]
 

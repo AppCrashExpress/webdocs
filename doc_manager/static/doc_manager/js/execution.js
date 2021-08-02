@@ -28,9 +28,9 @@ $(document).ready(function() {
         $("#order-table tbody tr").each(function () {
             const row = $(this);
             const cells = row.find("td");
-            const contains = (cells[1].innerText.toLowerCase() === spec_filter.val() 
+            const contains = (cells[3].innerText.toLowerCase() === spec_filter.val() 
                                 || !spec_filter.val() ) &&
-                             cells[2].innerText.toLowerCase().includes(customer_filter.val());
+                             cells[6].innerText.toLowerCase().includes(customer_filter.val());
 
             let start_date;
             let end_date;

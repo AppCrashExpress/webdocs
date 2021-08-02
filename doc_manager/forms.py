@@ -149,14 +149,19 @@ class OrderForm(ModelForm):
 
         return cleaned_data
 
-class ExecutionForm(ModelForm):
-    class ExecutionMultipleChoiceField(forms.ModelMultipleChoiceField):
-        def label_from_instance(self, obj):
-            return (f'<th scope="row">{obj.pk}</td>'
-                    f'<td>{obj.date}</td>'
-                    f'<td>{obj.specification.pk}</td>'
-                    f'<td>{obj.specification.customer}</td>')
+class ExecutionMultipleChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        label = (f'<th scope="row">{obj.pk}</td>'
+                f'<td>{obj.date}</td>'
+                f'<td>{obj.specification.from_addr}</td>'
+                f'<td>{obj.specification.to_addr}</td>'
+                f'<td>{obj.specification.doc_no}</td>'
+                f'<td>{obj.price}</td>')
+        label += f'<td>{obj.contractor}</td>' if obj.contractor else '<td></td>'
+        label += f'<td>{obj.specification.customer}</td>'
+        return label
 
+class ExecutionForm(ModelForm):
     class Meta:
         model  = the_models.Execution
         fields = '__all__'
@@ -182,7 +187,7 @@ class ExecutionForm(ModelForm):
             order_filter |= Q(exec_doc=self.instance.pk)
 
         self.fields['orders'].queryset = the_models.Order.objects.filter(
-                order_filter & Q(contractor__isnull=True)
+                order_filter
             )
 
         if self.instance.pk:
@@ -203,10 +208,6 @@ class ExecutionForm(ModelForm):
         if len(distinct_customers) != 1:
             raise ValidationError("У выбранных заказов должен быть один клиент")
 
-        contractors_present = data.filter(contractor__isnull=False).exists()
-        if contractors_present:
-            raise ValidationError("У выбранных заказов не может быть подрядчиков")
-
         return cleaned_data
 
     def save(self, commit=True):
@@ -220,13 +221,6 @@ class ExecutionForm(ModelForm):
         return instance
 
 class ContractorExecutionForm(ModelForm):
-    class ExecutionMultipleChoiceField(forms.ModelMultipleChoiceField):
-        def label_from_instance(self, obj):
-            return (f'<th scope="row">{obj.pk}</td>'
-                    f'<td>{obj.date}</td>'
-                    f'<td>{obj.specification.pk}</td>'
-                    f'<td>{obj.contractor}</td>')
-
     class Meta:
         model  = the_models.ContractorExecution
         fields = '__all__'

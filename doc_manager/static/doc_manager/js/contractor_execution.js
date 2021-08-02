@@ -34,7 +34,7 @@ $(document).ready(function() {
                                 || !spec_filter.val() );
 
             if (contractor_filter.val() !== "") {
-                 contains &= cells[2].innerText === contractor_filter.find('option:selected').text();
+                 contains &= cells[5].innerText === contractor_filter.find('option:selected').text();
             }
 
             let start_date;
@@ -67,4 +67,7 @@ $(document).ready(function() {
     contractor_filter.on('select2:select', filter);
     start_date_filter.change(filter);
     end_date_filter.change(filter);
+
+    // Contractor could be preselected
+    filter();
 })

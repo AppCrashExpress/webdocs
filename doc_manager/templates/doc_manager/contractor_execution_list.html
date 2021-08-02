@@ -1,5 +1,24 @@
 {% extends "doc_manager/table_generic.html" %}
 
+{% block table_input %}
+<form method="GET">
+    <select name="contractor">
+        <option value="">---------</option>
+        {% for contractor in contractor_list %}
+        <option value="{{contractor.pk}}"
+                {% if contractor.pk == contractor_value|add:"0" %}selected{% endif %}>
+            {{contractor}}
+        </option>
+        {% endfor %}
+    </select>
+    <label for="id_start_date">Начало: </label>
+    <input type="date" id="id_start_date" name="start_date" value="{{start_date_value}}">
+    <label for="id_end_date">Конец: </label>
+    <input type="date" id="id_end_date" name="end_date" value="{{end_date_value}}">
+    <button type="submit">Найти</button>
+</form>
+{% endblock %}
+
 {% block table_header %}
     <th scope="col">#</th>
     <th scope="col">Дата</th>

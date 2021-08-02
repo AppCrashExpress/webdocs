@@ -43,6 +43,7 @@
             </div>
         {% endif %}
         <div class="container">
+            <input type="text" id="client-filter" placeholder="Клиент">
             <input type="text" id="from-addr-filter" placeholder="Погрузка">
             <input type="text" id="to-addr-filter" placeholder="Выгрузка">
             <input type="text" id="mat-filter" placeholder="Материал">
@@ -68,7 +69,7 @@
                             <td>{{spec.from_addr}}</td>
                             <td>{{spec.to_addr}}</td>
                             <td>{{spec.material}}</td>
-                            <td>{{spec.units}}</td>
+                            <td>{{spec.get_units_display}}</td>
                             <td>{{spec.price}}</td>
                             <td>
                                 <input

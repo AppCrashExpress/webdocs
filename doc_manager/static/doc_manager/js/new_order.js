@@ -1,5 +1,6 @@
 (function() {
     const rows = document.querySelectorAll("#spec-table tbody tr")
+    const client_filter    = document.querySelector("#client-filter")
     const from_addr_filter = document.querySelector("#from-addr-filter")
     const to_addr_filter   = document.querySelector("#to-addr-filter")
     const mat_filter       = document.querySelector("#mat-filter")
@@ -21,9 +22,10 @@
     filter = function () {
             rows.forEach(function (row) {
                 const cells = row.querySelectorAll("td");
-                const contains = cells[0].innerText.toLowerCase().includes(from_addr_filter.value) &&
-                                 cells[1].innerText.toLowerCase().includes(to_addr_filter.value) &&
-                                 cells[2].innerText.toLowerCase().includes(mat_filter.value);
+                const contains = cells[0].innerText.toUpperCase().includes(client_filter.value.toUpperCase()) &&
+                                 cells[1].innerText.toUpperCase().includes(from_addr_filter.value.toUpperCase()) &&
+                                 cells[2].innerText.toUpperCase().includes(to_addr_filter.value.toUpperCase()) &&
+                                 cells[3].innerText.toUpperCase().includes(mat_filter.value.toUpperCase());
                 if (contains) {
                     row.style.display = "";
                 } else {
@@ -32,6 +34,7 @@
             });
     };
 
+    client_filter.addEventListener('keyup', filter)
     from_addr_filter.addEventListener('keyup', filter)
     to_addr_filter.addEventListener('keyup', filter)
     mat_filter.addEventListener('keyup', filter)

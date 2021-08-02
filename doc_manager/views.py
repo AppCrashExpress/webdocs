@@ -145,10 +145,32 @@ def hard_delete_specification(request, pk):
 class OrderList(generic.ListView):
     model = the_models.Order
 
+    def get_queryset(self):
+        start_date_value = self.request.GET.get('start_date')
+        end_date_value   = self.request.GET.get('end_date')
+        get_unfinished_orders = self.request.GET.get('unfinished_orders')
+
+        queryset = self.model.objects.all()
+        if start_date_value:
+            queryset = queryset.filter(date__gte=start_date_value)
+        if end_date_value:
+            queryset = queryset.filter(date__lte=end_date_value)
+        if get_unfinished_orders:
+            queryset = queryset.filter(
+                Q(driver__isnull=True) & Q(contractor__isnull=True) 
+                | Q(path__isnull=True)
+            )
+
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['create_path_name'] = 'doc_manager:new_order'
         context['edit_path_name'] = 'doc_manager:edit_order'
+
+        context['start_date_value']  = self.request.GET.get('start_date', '')
+        context['end_date_value']    = self.request.GET.get('end_date', '')
+        context['unfinished_orders'] = self.request.GET.get('unfinished_orders', '')
 
         return context
 
@@ -299,10 +321,25 @@ class ExecutionList(generic.ListView):
     model = the_models.Execution
 
     def get_queryset(self):
+        customer_id      = self.request.GET.get('customer')
+        start_date_value = self.request.GET.get('start_date')
+        end_date_value   = self.request.GET.get('end_date')
+
         queryset = self.model.objects.all()
+
+        if customer_id:
+            queryset = queryset.filter(order__specification__customer=customer_id)
+        if start_date_value:
+            queryset = queryset.filter(date__gte=start_date_value)
+        if end_date_value:
+            queryset = queryset.filter(date__lte=end_date_value)
+
         queryset = queryset.annotate(
+            customer=F('order__specification__customer__name'),
             sum=Sum(F('order__count') * F('order__specification__price'))
         )
+
+        queryset = queryset.order_by('date', 'customer')
 
         return queryset
 
@@ -310,6 +347,11 @@ class ExecutionList(generic.ListView):
         context = super().get_context_data(**kwargs)
         context['create_path_name'] = 'doc_manager:new_execution'
         context['edit_path_name'] = 'doc_manager:edit_execution'
+
+        context['customer_list']    = the_models.Customer.objects.all()
+        context['customer_value']   = self.request.GET.get('customer', '')
+        context['start_date_value'] = self.request.GET.get('start_date', '')
+        context['end_date_value']   = self.request.GET.get('end_date', '')
 
         return context
 
@@ -344,10 +386,24 @@ class ContractorExecutionList(generic.ListView):
     template_name = 'doc_manager/contractor_execution_list.html'
 
     def get_queryset(self):
+        contractor_id    = self.request.GET.get('contractor')
+        start_date_value = self.request.GET.get('start_date')
+        end_date_value   = self.request.GET.get('end_date')
+
         queryset = self.model.objects.all()
+
+        if contractor_id:
+            queryset = queryset.filter(contractor=contractor_id)
+        if start_date_value:
+            queryset = queryset.filter(date__gte=start_date_value)
+        if end_date_value:
+            queryset = queryset.filter(date__lte=end_date_value)
+
         queryset = queryset.annotate(
             sum=Sum(F('order__count') * F('order__specification__price'))
         )
+
+        queryset = queryset.order_by('date', 'order__contractor')
 
         return queryset
 
@@ -355,6 +411,11 @@ class ContractorExecutionList(generic.ListView):
         context = super().get_context_data(**kwargs)
         context['create_path_name'] = 'doc_manager:new_contractor_execution'
         context['edit_path_name'] = 'doc_manager:edit_contractor_execution'
+
+        context['contractor_list']  = the_models.Contractor.objects.all()
+        context['contractor_value'] = self.request.GET.get('contractor', '')
+        context['start_date_value'] = self.request.GET.get('start_date', '')
+        context['end_date_value']   = self.request.GET.get('end_date', '')
 
         return context
 
