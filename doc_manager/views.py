@@ -253,9 +253,9 @@ class OrderReportList(generic.ListView):
             tonnes_sum=Sum(F('specification__price') * F('count'), filter=Q(specification__units='t')),
         )
         for key, value in totals.items():
-            context[key] = value
+            context[key] = 0 if value is None else value
 
-        context['total_sum'] = totals['metres_sum'] + totals['tonnes_sum']
+        context['total_sum'] = context['metres_sum'] + context['tonnes_sum']
 
         return context
 
