@@ -56,6 +56,15 @@
     <td>{{ total }}</td>
 {% endblock %}
 
+{% block post_table %}
+
+<a href="{% url 'doc_manager:contractor_report_download' %}?start_date={{start_date_value}}&end_date={{end_date_value}}&contractor={{contractor_value}}"
+   class="btn btn-primary">
+    Выгрузить в Excel
+</a>
+
+{% endblock %}
+
 {% block no_objects_found %}
     <p>Поездок не найдено</p>
 {% endblock %}

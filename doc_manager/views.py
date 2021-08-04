@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins     import PermissionRequiredMixin
 
@@ -5,6 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib   import messages
 from django.views     import generic
 from django.urls      import reverse
+from django.http.response import HttpResponse
 
 from django.db.models import Sum, F, Q
 
@@ -12,7 +15,8 @@ from safedelete.models import HARD_DELETE
 
 from . import models as the_models
 from . import forms  as the_forms
-from .utils import create_generic, edit_generic, delete_generic
+from .utils import (create_generic, edit_generic, delete_generic,
+                    get_report_workbook)
 
 class SpecificationsView(generic.ListView):
     model = the_models.Specification
@@ -258,6 +262,66 @@ class OrderReportList(generic.ListView):
         context['total_sum'] = context['metres_sum'] + context['tonnes_sum']
 
         return context
+
+def download_order_report(request):
+    model = the_models.Order
+    customer_id      = request.GET.get('customer')
+    start_date_value = request.GET.get('start_date')
+    end_date_value   = request.GET.get('end_date')
+
+    queryset = model.objects.all()
+    if customer_id:
+        queryset = queryset.filter(specification__customer=customer_id)
+    if start_date_value:
+        queryset = queryset.filter(date__gte=start_date_value)
+    if end_date_value:
+        queryset = queryset.filter(date__lte=end_date_value)
+
+    queryset = queryset.annotate(
+        price=F('count') * F('specification__price')
+    )
+
+    fields = [
+        'id',
+        'date',
+        'specification__doc_no',
+        'specification__customer__name',
+        'path__path_from__name',
+        'path__path_to__name',
+        'specification__price',
+        'specification__units',
+        'count',
+        'price',
+        'exec_doc__exec_no',
+        'exec_doc__date',
+    ]
+
+    verbose_names = {
+        'id':                    "Номер",
+        'specification__doc_no': "Номер спецификации",
+        'path__path_from__name': "Фактич. погрузка",
+        'path__path_to__name':   "Фактич. выгрузка",
+        'price':                 "Сумма",
+        'exec_doc__exec_no':     "Номер УПД",
+        'exec_doc__date':        "Дата УПД",
+    }
+
+    display_values = dict(the_models.Specification.UNITS)
+    
+    wb = get_report_workbook(queryset,
+                             fields=fields,
+                             verbose_names=verbose_names,
+                             display_values=display_values)
+
+    filename = ('order-report_'
+                f"{datetime.datetime.now().strftime('%d-%m-%y')}"
+                '.xlsx')
+    
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    wb.save(response)
+
+    return response
 
 class DeletedOrderList(PermissionRequiredMixin, generic.ListView):
     model = the_models.Order
@@ -701,6 +765,53 @@ class DriverReportList(generic.ListView):
 
         return context
 
+def download_driver_report(request):
+    model = the_models.Order
+
+    driver_id        = request.GET.get('driver')
+    start_date_value = request.GET.get('start_date')
+    end_date_value   = request.GET.get('end_date')
+
+    queryset = model.objects.filter(path__isnull=False)
+    queryset = queryset.filter(driver__isnull=False)
+
+    if driver_id:
+        queryset = queryset.filter(driver=driver_id)
+    if start_date_value:
+        queryset = queryset.filter(date__gte=start_date_value)
+    if end_date_value:
+        queryset = queryset.filter(date__lte=end_date_value)
+
+    fields = [
+        'id',
+        'driver__name',
+        'date',
+        'path__path_from__name',
+        'path__path_to__name',
+        'path__cost',
+    ]
+
+    verbose_names = {
+        'id':                    'Номер',
+        'driver__name':          'Водитель',
+        'path__path_from__name': 'Фактич. погрузка',
+        'path__path_to__name':   'Фактич. выгрузка',
+    }
+
+    wb = get_report_workbook(queryset,
+                             fields=fields,
+                             verbose_names=verbose_names)
+
+    filename = ('driver-report_'
+                f"{datetime.datetime.now().strftime('%d-%m-%y')}"
+                '.xlsx')
+    
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    wb.save(response)
+
+    return response
+
 class ContractorsList(generic.ListView):
     model = the_models.Contractor
 
@@ -778,6 +889,57 @@ class ContractorReportList(generic.ListView):
         )['total']
 
         return context
+
+def download_contractor_report(request):
+    model = the_models.Order
+
+    contractor_id    = request.GET.get('contractor')
+    start_date_value = request.GET.get('start_date')
+    end_date_value   = request.GET.get('end_date')
+
+    queryset = model.objects.filter(path__isnull=False)
+    queryset = queryset.filter(contractor__isnull=False)
+
+    if contractor_id:
+        queryset = queryset.filter(contractor=contractor_id)
+    if start_date_value:
+        queryset = queryset.filter(date__gte=start_date_value)
+    if end_date_value:
+        queryset = queryset.filter(date__lte=end_date_value)
+
+    fields = [
+        'id', 
+        'contractor__name',
+        'date',
+        'path__path_from__name',
+        'path__path_to__name',
+        'path__cost',
+        'contr_doc__exec_no',
+        'contr_doc__date',
+    ]
+
+    verbose_names = {
+        'id':                    'Номер',
+        'contractor__name':      'Подрядчик',
+        'path__path_from__name': 'Фактич. погрузка',
+        'path__path_to__name':   'Фактич. выгрузка',
+        'contr_doc__exec_no':    'Номер УПД',
+        'contr_doc__date':       'Дата УПД',
+    }
+    
+    wb = get_report_workbook(queryset,
+                             fields=fields,
+                             verbose_names=verbose_names)
+
+    filename = ('contractor-report_'
+                f"{datetime.datetime.now().strftime('%d-%m-%y')}"
+                '.xlsx')
+    
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    wb.save(response)
+
+    return response
 
 class PathCostList(generic.ListView):
     model = the_models.PathCost

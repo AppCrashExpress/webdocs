@@ -91,7 +91,7 @@ def get_verbose_name(model, string):
 
     return model._meta.get_field(fields[-1]).verbose_name
 
-def get_report_workbook(queryset, *, fields, verbose_names, display_values):
+def get_report_workbook(queryset, *, fields, verbose_names, display_values=None):
     def normalize_value(value, display_values):
         # Can modify if new special types arise
         if value is None:
@@ -117,6 +117,9 @@ def get_report_workbook(queryset, *, fields, verbose_names, display_values):
             field_names.append(vb_name)
 
         return field_names
+
+    if display_values is None:
+        display_values = dict()
 
     model = queryset.model
     wb = Workbook()

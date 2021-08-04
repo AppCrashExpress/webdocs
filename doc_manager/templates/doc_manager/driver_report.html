@@ -1,6 +1,5 @@
 {% extends "doc_manager/table_generic.html" %}
 
-
 {% block table_input %}
 <form method="GET">
     <select name="driver">
@@ -45,6 +44,15 @@
     <td></td>
     <th scope="row">Итог:</th>
     <td>{{ total }}</td>
+{% endblock %}
+
+{% block post_table %}
+
+<a href="{% url 'doc_manager:driver_report_download' %}?start_date={{start_date_value}}&end_date={{end_date_value}}&driver={{driver_value}}"
+   class="btn btn-primary">
+    Выгрузить в Excel
+</a>
+
 {% endblock %}
 
 {% block no_objects_found %}

@@ -22,6 +22,7 @@ urlpatterns = [
     path('orders/<int:pk>/', views.edit_order, name='edit_order'),
     path('orders/<int:pk>/delete/', views.delete_order, name='delete_order'),
     path('orders/report/', views.OrderReportList.as_view(), name='order_report'),
+    path('orders/report/download/', views.download_order_report, name='order_report_download'),
 
     path('execution/', views.ExecutionList.as_view(), name='execution'),
     path('execution/new/', views.create_execution, name='new_execution'),
@@ -57,12 +58,14 @@ urlpatterns = [
     path('drivers/<int:pk>/', views.edit_driver, name='edit_driver'),
     path('drivers/<int:pk>/delete/', views.delete_driver, name='delete_driver'),
     path('drivers/report/', views.DriverReportList.as_view(), name='driver_report'),
+    path('drivers/report/download/', views.download_driver_report, name='driver_report_download'),
 
     path('contractor/', views.ContractorsList.as_view(), name='contractor'),
     path('contractor/new/', views.create_contractor, name='new_contractor'),
     path('contractor/<int:pk>/', views.edit_contractor, name='edit_contractor'),
     path('contractor/<int:pk>/delete/', views.delete_contractor, name='delete_contractor'),
     path('contractor/report/', views.ContractorReportList.as_view(), name='contractor_report'),
+    path('contractor/report/download/', views.download_contractor_report, name='contractor_report_download'),
 
     path('contractor/execution/', 
          views.ContractorExecutionList.as_view(),
