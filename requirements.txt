@@ -1,5 +1,6 @@
 crispy-bootstrap5==0.4
 Django==3.2.4
 django-safedelete==1.0.0
-python-dotenv==0.18.0
+openpyxl==3.0.7
 psycopg2-binary>=2.8
+python-dotenv==0.18.0
