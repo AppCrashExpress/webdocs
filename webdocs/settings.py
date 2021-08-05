@@ -14,10 +14,6 @@ from django.contrib import messages
 
 import os
 from pathlib import Path
-from dotenv  import load_dotenv
-
-# Load environmental variables, including key
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
