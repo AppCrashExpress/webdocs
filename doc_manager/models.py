@@ -6,6 +6,8 @@ class Address(models.Model):
     name = models.CharField("Полный адрес", max_length=255, unique=True)
 
     class Meta:
+        verbose_name = "Адрес"
+        verbose_name_plural = "Адреса"
         ordering = ['name']
 
     def __str__(self):
@@ -15,6 +17,8 @@ class Contractor(models.Model):
     name = models.CharField("Подрядчик", max_length=255)
 
     class Meta:
+        verbose_name = "Подрядчик"
+        verbose_name_plural = "Подрядчик"
         ordering = ['name']
 
     def __str__(self):

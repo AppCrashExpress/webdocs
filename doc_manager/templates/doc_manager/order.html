@@ -1,13 +1,31 @@
 {% extends "base_generic.html" %}
 
 {% load crispy_forms_tags %}
+{% load extras %}
 {% load static %}
 
 {% block head_addendum %}
     <link rel="stylesheet" href="{% static 'doc_manager/css/styles.css' %}">
 {% endblock %}
 
+{% block title %}{% get_verbose_name form.instance %} - {{ block.super }}{% endblock%}
+
 {% block content %}
+
+<div class="p-3 text-center">
+    <h1>
+        {% if form.instance.pk %}
+            {% if form.instance.deleted %}
+                Восстановить:
+            {% else%}
+                Изменить:
+            {% endif %}
+        {% else %}
+            Создать:
+        {% endif %}
+        {% get_verbose_name form.instance %}
+    </h1>
+</div>
 
 {% if messages %}
 <ul class="messages">
@@ -114,7 +132,7 @@
     {{form.path | as_crispy_field }}
 
     {% if form.instance.deleted %}
-        Объект помечен на удаление: {{form.instance.deleted|date:"d.m.Y, G:i"}}
+        <p>Объект помечен на удаление: {{form.instance.deleted|date:"d.m.Y, G:i"}}</p>
     {% endif %}
 
     {% if form.instance.pk %}

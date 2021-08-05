@@ -1,5 +1,9 @@
 {% extends "doc_manager/table_generic.html" %}
 
+{% block title %}Список спецификаций - {{ block.super }}{% endblock%}
+
+{% block page_head %}Список спецификаций{% endblock %}
+
 {% block table_input %}
 <form method="GET" action={% url 'doc_manager:specification' %}>
     <input 

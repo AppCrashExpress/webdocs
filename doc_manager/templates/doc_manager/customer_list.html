@@ -1,5 +1,9 @@
 {% extends "doc_manager/table_generic.html" %}
 
+{% block title %}Список клиентов - {{ block.super }}{% endblock%}
+
+{% block page_head %}Список клиентов{% endblock %}
+
 {% block table_input %}
 <form method="GET">
     <input 

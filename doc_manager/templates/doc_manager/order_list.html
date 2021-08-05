@@ -1,5 +1,9 @@
 {% extends "doc_manager/table_generic.html" %}
 
+{% block title %}Список заказов - {{ block.super }}{% endblock%}
+
+{% block page_head %}Список заказов{% endblock %}
+
 {% block table_input %}
 <form method="GET">
     <label for="id_start_date">Начало: </label>

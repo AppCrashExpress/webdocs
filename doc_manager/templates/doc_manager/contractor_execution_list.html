@@ -1,5 +1,9 @@
 {% extends "doc_manager/table_generic.html" %}
 
+{% block title %}УПД подрядчиков - {{ block.super }}{% endblock%}
+
+{% block page_head %}УПД подрядчиков{% endblock %}
+
 {% block table_input %}
 <form method="GET">
     <select name="contractor">

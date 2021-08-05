@@ -1,5 +1,8 @@
 {% extends "doc_manager/table_generic.html" %}
 
+{% block title %}Отчет по заказам - {{ block.super }}{% endblock%}
+
+{% block page_head %}Отчет по заказам{% endblock %}
 
 {% block table_input %}
 <form method="GET">
