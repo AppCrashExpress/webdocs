@@ -284,4 +284,7 @@ class Order(SafeDeleteModel, models.Model):
         ]
 
     def __str__(self):
-        return f'Заказ с № спец. {self.specification.doc_no} по пути: {self.path}'
+        order_str = f'Заказ с № спец. {self.specification.doc_no}'
+        if self.path:
+            order_str += f' по пути: {self.path}'
+        return order_str

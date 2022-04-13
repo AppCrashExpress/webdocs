@@ -140,9 +140,21 @@ class OrderForm(ModelForm):
         driver = cleaned_data.get('driver')
         contractor = cleaned_data.get('contractor')
         path = cleaned_data.get('path')
+        vehicle = cleaned_data.get('vehicle')
+
+        if path is None and driver is None and contractor is None:
+            return cleaned_data
+        elif path is None:
+            raise ValidationError("Если выбран либо водитель, либо подрядчик, "
+                                  "то путь должен быть выбран")
 
         if driver is not None and contractor is not None:
             raise ValidationError("Можно выбрать либо водителя, либо подрядчика")
+        elif driver is None and contractor is None:
+            raise ValidationError("Нужно выбрать водителя или подрядчика")
+
+        if driver is not None and vehicle is None:
+            raise ValidationError("К водителю нужно выбрать транспорт")
 
         if contractor != path.contractor:
             raise ValidationError('Подрядчик должен совпадать с указанным в пути')
