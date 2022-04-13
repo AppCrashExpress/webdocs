@@ -9,6 +9,7 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
   web:
     build: .
     command: gunicorn webdocs.wsgi:application --bind 0.0.0.0:8000
@@ -16,3 +17,12 @@ services:
       - key.env
     depends_on:
       - db
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./staticfiles:/home/app/code/staticfiles
+    ports:
+      - "80:80"
+    depends_on:
+      - web
